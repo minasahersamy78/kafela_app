@@ -16,12 +16,20 @@
         @media(max-width:600px){ .grid { grid-template-columns: 1fr; } }
         label { font-weight: 600; color: #38bdf8; margin-bottom: 5px; display: block; }
         input, select { width: 100%; padding: 12px; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: white; font-family: 'Cairo'; box-sizing: border-box; }
-        .btn-add { background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; width: 100%; margin-top: 15px; }
+        input:focus, select:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 10px rgba(59,130,246,0.3); }
+        .btn-add { background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; width: 100%; margin-top: 15px; transition: 0.3s; }
+        .btn-add:hover { background: #2563eb; }
         .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #2563eb, #10b981); color: white; font-size: 1.1em; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; font-family: 'Cairo'; margin-top: 15px; }
         .table-container { overflow-x: auto; width: 100%; border-radius: 10px; border: 1px solid #334155; }
         table { width: 100%; border-collapse: collapse; background: #0f172a; }
         th, td { padding: 10px; text-align: center; border-bottom: 1px solid #334155; }
         th { background: #1e293b; color: #38bdf8; }
+        
+        /* تنسيقات الرسالة الذكية (الـ Hint) */
+        .hint { margin-top: 8px; font-size: 0.95em; font-weight: 600; min-height: 1.2em; }
+        .hint.ok { color: #10b981; }
+        .hint.warn { color: #f59e0b; }
+        .hint.info { color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -48,16 +56,30 @@
     <div class="card">
         <h3>➕ إضافة منتج للطلب الحالي</h3>
         <div class="grid">
-            <div><label>القسم:</label><select id="cat" onchange="updateItems()"><option value="" disabled selected>اختر القسم...</option></select></div>
-            <div><label>اسم المنتج:</label><input type="text" id="item" list="itemList" placeholder="اكتب أو اختر المنتج..."><datalist id="itemList"></datalist></div>
+            <div>
+                <label>القسم:</label>
+                <select id="cat" onchange="updateItems(); updateHint();">
+                    <option value="" disabled selected>اختر القسم...</option>
+                </select>
+            </div>
+            <div>
+                <label>اسم المنتج:</label>
+                <input type="text" id="item" list="itemList" placeholder="اكتب أو اختر المنتج..." oninput="onItemInput()">
+                <datalist id="itemList"></datalist>
+                <div class="hint info" id="stockHint">⏳ جاري تحميل أصناف المخزن...</div>
+            </div>
+            <div>
+                <label>الكمية المطلوبة:</label>
+                <input type="number" id="qty" min="0.1" step="0.1" placeholder="الكمية..." oninput="updateHint()">
+            </div>
             <div>
                 <label>الوحدة:</label>
-                <select id="unit">
+                <select id="unit" onchange="updateHint()">
+                    <option value="" disabled selected>اختر الوحدة...</option>
                     <option value="قطعه">قطعه</option><option value="كيلو">كيلو</option><option value="لتر">لتر</option>
                     <option value="كيس">كيس</option><option value="علبة">علبة</option><option value="لفة">لفة</option>
                 </select>
             </div>
-            <div><label>الكمية المطلوبة:</label><input type="number" id="qty" min="0.1" step="0.1" placeholder="0"></div>
             <div><label>تاريخ الاستخدام:</label><input type="date" id="date"></div>
             <div><label>صورة المنتج (اختياري):</label><input type="file" id="img" accept="image/*"></div>
         </div>
@@ -78,24 +100,102 @@
     <script>
         const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
         const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        
         let invData = [], cart = [];
+        const DEFAULT_CATS = ['العاب','اكل خدام','شنطه الانبا ابرام','ديكور','عمل فني','عمل خدمي', 'بلاستيكات', 'اكل'];
+        
+        // دوال المساعدة لتنظيف النصوص والمقارنة باللغة العربية
+        const norm = t => String(t || '').trim().toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه');
+        const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-        document.getElementById('date').valueAsDate = new Date();
+        // ضبط تاريخ اليوم تلقائياً
+        const dateInput = document.getElementById('date');
+        const today = new Date();
+        const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        dateInput.value = localDate; dateInput.min = localDate;
 
-        async function init() {
-            try {
-                invData = await (await fetch(inventoryURL)).json();
-                const cats = new Set(invData.map(i => i.sheet).filter(Boolean));
-                const cSel = document.getElementById('cat');
-                cats.forEach(c => cSel.innerHTML += `<option value="${c}">${c}</option>`);
-            } catch(e) {}
+        function addOption(select, value) {
+            if (value && ![...select.options].some(o => o.value === value)) {
+                const o = document.createElement('option'); o.value = value; o.textContent = value; select.appendChild(o);
+            }
         }
 
+        async function init() {
+            const catSel = document.getElementById('cat');
+            DEFAULT_CATS.forEach(c => addOption(catSel, c)); // وضع الأقسام الافتراضية
+
+            try {
+                const data = await (await fetch(inventoryURL)).json();
+                invData = Array.isArray(data) ? data.filter(i => i.sheet && i.item) : [];
+                
+                // إضافة الأقسام من السيرفر إن وجدت أقسام أخرى
+                const cats = new Set(invData.map(i => i.sheet).filter(Boolean));
+                cats.forEach(c => addOption(catSel, c));
+                
+                document.getElementById('stockHint').textContent = 'اختر منتجاً من المخزن ليظهر قسمه ووحدته تلقائياً، أو اكتب منتجاً جديداً.';
+                updateItems();
+            } catch(e) {
+                document.getElementById('stockHint').textContent = '⚠️ تعذر تحميل المخزن، ولكن يمكنك إدخال البيانات يدوياً.';
+            }
+        }
+
+        // تحديث القائمة المنسدلة بناءً على القسم المختار
         function updateItems() {
             const cat = document.getElementById('cat').value;
             const dl = document.getElementById('itemList');
             dl.innerHTML = '';
-            invData.filter(i => i.sheet === cat).forEach(i => dl.innerHTML += `<option value="${i.item}">`);
+            invData.filter(i => i.sheet === cat).forEach(i => dl.innerHTML += `<option value="${esc(i.item)}">`);
+        }
+
+        // إيجاد العنصر الحالي في قاعدة البيانات (لتفعيل الذكاء في الاستكمال)
+        function currentItem() {
+            const name = norm(document.getElementById('item').value);
+            const cat = document.getElementById('cat').value;
+            const m = invData.filter(i => norm(i.item) === name);
+            return m.find(i => i.sheet === cat) || m[0] || null;
+        }
+
+        // بمجرد كتابة الخادم لاسم منتج، يتعرف عليه النظام ويكمل باقي البيانات
+        function onItemInput() {
+            const it = currentItem();
+            if (it) {
+                document.getElementById('cat').value = it.sheet;
+                updateItems(); // تحديث الداتاليست
+                const u = document.getElementById('unit');
+                addOption(u, it.unit); 
+                u.value = it.unit;
+            }
+            updateHint();
+        }
+
+        // التحديث اللحظي للرسالة (الـ Hint) وحساب الرصيد مقارنة بالطلب
+        function updateHint() {
+            const hint = document.getElementById('stockHint');
+            const itemName = document.getElementById('item').value.trim();
+            
+            if (!itemName || !invData.length) { 
+                hint.className = 'hint info'; 
+                hint.textContent = invData.length ? 'اختر منتجاً من المخزن ليظهر قسمه ووحدته تلقائياً، أو اكتب منتجاً جديداً.' : '⏳ جاري التحميل...';
+                return; 
+            }
+            
+            const it = currentItem();
+            if (!it) { 
+                hint.className = 'hint info'; 
+                hint.textContent = 'منتج غير موجود في المخزن — سيُسجَّل كطلب جديد.'; 
+                return; 
+            }
+            
+            const avail = parseFloat(it.remaining) || 0;
+            const q = parseFloat(document.getElementById('qty').value) || 0;
+            
+            if (q > avail) {
+                hint.className = 'hint warn';
+                hint.textContent = `المتاح حالياً في المخزن: ${avail} ${it.unit} — وهنتواصل معاك بخصوص الباقي 🙏`;
+            } else {
+                hint.className = 'hint ok';
+                hint.textContent = `✅ متاح في المخزن: ${avail} ${it.unit}`;
+            }
         }
 
         async function addToCart() {
@@ -106,7 +206,7 @@
             const date = document.getElementById('date').value;
             const file = document.getElementById('img').files[0];
 
-            if(!category || !item || !qty || qty <= 0) return alert('أكمل بيانات المنتج والكمية والقسم!');
+            if(!category || !item || !qty || qty <= 0 || !unit) return alert('أكمل بيانات القسم، المنتج، الوحدة والكمية!');
 
             let b64 = null, mType = null, iName = null;
             if(file) {
@@ -118,9 +218,12 @@
             }
 
             cart.push({ category, item, qty, unit, date, imageBase64: b64, mimeType: mType, imageName: iName });
+            
+            // تفريغ المدخلات بعد الإضافة للسلة لتجهيزها لمنتج جديد
             document.getElementById('item').value = '';
             document.getElementById('qty').value = '';
             document.getElementById('img').value = '';
+            updateHint(); 
             renderCart();
         }
 
@@ -130,8 +233,8 @@
             if(!cart.length) { card.style.display = 'none'; return; }
             card.style.display = 'block';
             tbody.innerHTML = cart.map((c, i) => `<tr>
-                <td>${c.category}</td><td style="font-weight:bold;">${c.item}</td>
-                <td style="color:#10b981;font-weight:bold;">${c.qty}</td><td>${c.unit}</td><td>${c.date}</td>
+                <td>${esc(c.category)}</td><td style="font-weight:bold;">${esc(c.item)}</td>
+                <td style="color:#10b981;font-weight:bold;">${c.qty}</td><td>${esc(c.unit)}</td><td>${esc(c.date)}</td>
                 <td><button onclick="cart.splice(${i},1);renderCart();" style="background:#ef4444;color:white;border:none;border-radius:5px;cursor:pointer;padding:4px 8px;">❌</button></td>
             </tr>`).join('');
         }
@@ -144,17 +247,35 @@
             const btn = document.getElementById('sendBtn');
             btn.disabled = true; btn.innerText = '⏳ جاري إرسال الطلبات...';
 
-            for(let p of cart) {
-                await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({
-                    action: 'add', category: p.category, requesterName: name, contactNumber: phone,
-                    item: p.item, qty: p.qty, unit: p.unit, date: p.date,
-                    imageBase64: p.imageBase64, mimeType: p.mimeType, imageName: p.imageName
-                })});
+            let successCount = 0;
+            try {
+                for(let p of cart) {
+                    const res = await fetch(purchaseURL, { 
+                        method: 'POST', 
+                        body: JSON.stringify({
+                            action: 'add', category: p.category, requesterName: name, contactNumber: phone,
+                            item: p.item, qty: p.qty, unit: p.unit, date: p.date,
+                            imageBase64: p.imageBase64, mimeType: p.mimeType, imageName: p.imageName
+                        }),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                    });
+                    const result = await res.json();
+                    if(result && (result.status === 'success' || result.fulfilled !== undefined)) {
+                        successCount++;
+                    }
+                }
+                
+                if (successCount === cart.length) {
+                    alert('✅ تم إرسال كل الطلبات للإدارة بنجاح! شكراً لخدمتك 💙');
+                    cart = []; renderCart();
+                } else {
+                    alert('⚠️ تم إرسال بعض المنتجات وحدث خطأ في الباقي. برجاء مراجعة الإدارة.');
+                }
+            } catch (error) {
+                alert("⚠️ حدث خطأ في الاتصال بالسيرفر أثناء إرسال الطلب!");
+            } finally {
+                btn.disabled = false; btn.innerText = '🚀 إرسال الطلب بالكامل للإدارة';
             }
-
-            alert('✅ تم إرسال كل الطلبات للإدارة بنجاح!');
-            cart = []; renderCart();
-            btn.disabled = false; btn.innerText = '🚀 إرسال الطلب بالكامل للإدارة';
         }
 
         init();
