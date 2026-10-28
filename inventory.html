@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة رصيد المخزون</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1100px; margin: auto; }
+        .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.9em; }
+        .nav-btn:hover, .nav-btn.active { background: #3b82f6; color: #fff; border-color: #60a5fa; }
+        .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
+        .card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media(max-width:768px){ .grid { grid-template-columns: 1fr; } }
+        label { font-weight: 600; color: #38bdf8; margin-bottom: 8px; display: block; }
+        select, input { width: 100%; padding: 12px; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #fff; font-family: 'Cairo'; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
+        button { flex: 1; padding: 14px; font-family: 'Cairo'; font-weight: bold; border-radius: 12px; border: none; cursor: pointer; font-size: 1em; }
+        .btn-add { background: #10b981; color: #fff; }
+        .btn-sub { background: transparent; color: #ef4444; border: 2px solid #ef4444; }
+        .btn-refresh { background: #3b82f6; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
+        .table-container { overflow-x: auto; width: 100%; border-radius: 12px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; white-space: nowrap; }
+        th { background: #0f172a; color: #38bdf8; }
+        .cat-badge { background: #0f172a; padding: 4px 10px; border-radius: 8px; border: 1px solid #334155; }
+        .btn-del { background: #ef4444; color: white; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <a href="index.html" class="nav-btn nav-home">🏠 القائمة الرئيسية</a>
+        <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
+        <a href="inventory.html" class="nav-btn active">📦 رصيد المخزون</a>
+        <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
+        <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
+        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
+        <a href="reports.html" class="nav-btn">📊 التقارير</a>
+    </div>
+
+    <h2 style="color:#38bdf8; margin-bottom:20px;">📦 2. إدارة رصيد المخزون</h2>
+
+    <div class="card">
+        <h3>🔄 تسجيل حركة سريعة (وارد / منصرف)</h3>
+        <div class="grid">
+            <div><label>اختر الصنف:</label><select id="itemSelect"><option value="">⏳ جاري التحميل...</option></select></div>
+            <div><label>الكمية المراد تعديلها:</label><input type="number" id="amountInput" value="1" min="0.1" step="0.1"></div>
+        </div>
+        <div class="btn-group">
+            <button onclick="updateInventoryQty('add')" class="btn-add" id="addBtn">📥 إضافة (وارد)</button>
+            <button onclick="updateInventoryQty('subtract')" class="btn-sub" id="subBtn">📤 سحب (منصرف)</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="margin: 0;">🔍 رصيد الأصناف الحالية</h3>
+            <button class="btn-refresh" onclick="loadInventoryData()" id="refreshBtn">🔄 تحديث البيانات</button>
+        </div>
+        <div class="grid" style="margin-bottom:15px;">
+            <div><label>بحث بالاسم:</label><input type="text" id="invSearchInput" oninput="filterInventoryTable()" placeholder="اكتب للبحث..."></div>
+            <div><label>القسم:</label><select id="invCategoryFilter" onchange="filterInventoryTable()"><option value="الكل">عرض الكل</option></select></div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>القسم</th><th>اسم الصنف</th><th>المعرف</th><th>الوحدة</th><th>المنصرف</th><th>المتبقي</th><th>حذف</th></tr>
+                </thead>
+                <tbody id="invTableBody"><tr><td colspan="7">⏳ جاري التحميل...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
+        const activeToken = sessionStorage.getItem('adminPass') || 'admin123';
+        let inventoryDataGlobal = [];
+
+        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        function errMsg(r) { return r && (r.error || (r.status === 'error' ? (r.message || 'خطأ في السيرفر') : '')); }
+
+        async function inventoryPost(obj) {
+            const r = await fetch(inventoryURL, { method: 'POST', body: JSON.stringify(obj), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+            return r.json();
+        }
+
+        async function loadInventoryData() {
+            const tbody = document.getElementById('invTableBody');
+            tbody.innerHTML = '<tr><td colspan="7">⏳ جاري التحميل...</td></tr>';
+            try {
+                const res = await fetch(inventoryURL);
+                inventoryDataGlobal = await res.json();
+
+                const invCategoryFilter = document.getElementById('invCategoryFilter');
+                const itemSelect = document.getElementById('itemSelect'); 
+                
+                invCategoryFilter.innerHTML = '<option value="الكل">عرض كل الأقسام</option>';
+                itemSelect.innerHTML = '<option value="" disabled selected>-- اختر الصنف --</option>';
+                
+                const categories = new Set();
+                const groupedData = {};
+
+                inventoryDataGlobal.forEach(item => {
+                    if (item.sheet) {
+                        categories.add(item.sheet);
+                        groupedData[item.sheet] = groupedData[item.sheet] || [];
+                        groupedData[item.sheet].push(item);
+                    }
+                });
+
+                categories.forEach(cat => {
+                    invCategoryFilter.innerHTML += `<option value="${escH(cat)}">${escH(cat)}</option>`;
+                });
+
+                for (let sheetName in groupedData) {
+                    let optGroup = document.createElement('optgroup');
+                    optGroup.label = `📂 قسم: ${sheetName}`;
+                    groupedData[sheetName].forEach(item => {
+                        let option = document.createElement('option');
+                        option.value = `${item.sheet}|${item.item}`;
+                        option.textContent = `${item.item} (${item.unit})`;
+                        optGroup.appendChild(option);
+                    });
+                    itemSelect.appendChild(optGroup);
+                }
+
+                filterInventoryTable();
+            } catch (e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="7" style="color:#ef4444;">⚠️ تعذر سحب البيانات</td></tr>';
+            }
+        }
+
+        function filterInventoryTable() {
+            const tbody = document.getElementById('invTableBody');
+            const searchText = document.getElementById('invSearchInput').value.trim().toLowerCase();
+            const catFilter = document.getElementById('invCategoryFilter').value;
+
+            tbody.innerHTML = '';
+
+            let filtered = inventoryDataGlobal.filter(item => {
+                const matchesSearch = item.item ? item.item.toLowerCase().includes(searchText) : false;
+                const matchesCat = (catFilter === 'الكل' || item.sheet === catFilter);
+                return matchesSearch && matchesCat;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">لا توجد أصناف تطابق البحث.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(item => {
+                let isWarning = item.remaining <= 0 ? 'color: #ef4444; font-weight: bold;' : 'color: #10b981; font-weight: bold;';
+                let cleanSheet = item.sheet.replace(/'/g, "\\'");
+                let cleanItem = item.item.replace(/'/g, "\\'");
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="cat-badge">${escH(item.sheet)}</span></td>
+                        <td style="font-weight: 700; color: #f8fafc;">${escH(item.item)}</td>
+                        <td>${escH(item.quantity)}</td>
+                        <td>${escH(item.unit)}</td>
+                        <td style="color: #ef4444;">${escH(item.issued)}</td>
+                        <td style="font-size: 1.15em; ${isWarning}">${escH(item.remaining)}</td>
+                        <td>
+                            <button class="btn-del" onclick="deleteProduct('${cleanSheet}', '${cleanItem}', this)">مسح 🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function updateInventoryQty(action) {
+            const selectVal = document.getElementById('itemSelect').value;
+            if (!selectVal) return alert("يرجى اختيار الصنف أولاً!");
+            const [sheet, item] = selectVal.split('|');
+            let amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            if (amount <= 0) return alert("يرجى إدخال كمية صحيحة!");
+
+            document.getElementById('addBtn').disabled = true;
+            document.getElementById('subBtn').disabled = true;
+
+            let obj = { sheet: sheet, item: item, amount: amount, action: action, pass: activeToken };
+
+            try {
+                const result = await inventoryPost(obj);
+                if(errMsg(result)) alert("⚠️ " + errMsg(result));
+                else {
+                    document.getElementById('amountInput').value = 1;
+                    await loadInventoryData();
+                    alert(`✅ تمت العملية بنجاح لصنف: ${item}`);
+                }
+            } catch (error) { alert("⚠️ حدث خطأ!"); } 
+            finally { document.getElementById('addBtn').disabled = false; document.getElementById('subBtn').disabled = false; }
+        }
+
+        async function deleteProduct(sheet, item, btn) {
+            if (!confirm(`⚠️ تأكيد: هل تريد مسح الصنف "${item}" من المخزن؟`)) return;
+            let originalText = btn.innerText; btn.innerText = "⏳"; btn.disabled = true;
+
+            let obj = { action: 'deleteProduct', sheet: sheet, item: item, pass: activeToken };
+
+            try {
+                const result = await inventoryPost(obj);
+                if (errMsg(result)) alert("⚠️ " + errMsg(result));
+                else { alert(`✅ تم مسح "${item}" من المخزن.`); await loadInventoryData(); }
+            } catch (error) { alert("⚠️ حدث خطأ!"); } 
+            finally { btn.innerText = originalText; btn.disabled = false; }
+        }
+
+        loadInventoryData();
+    </script>
+</body>
+</html>

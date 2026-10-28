@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة صنف جديد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 800px; margin: auto; }
+        .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.9em; }
+        .nav-btn:hover, .nav-btn.active { background: #3b82f6; color: #fff; border-color: #60a5fa; }
+        .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; border: 1px solid #334155; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media(max-width:600px){ .grid { grid-template-columns: 1fr; } }
+        label { font-weight: 600; color: #38bdf8; margin-bottom: 8px; display: block; }
+        select, input { width: 100%; padding: 14px; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #fff; font-family: 'Cairo'; box-sizing: border-box; }
+        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #10b981 100%); color: #ffffff; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1em; font-family: 'Cairo'; }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <a href="index.html" class="nav-btn nav-home">🏠 القائمة الرئيسية</a>
+        <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
+        <a href="inventory.html" class="nav-btn">📦 رصيد المخزون</a>
+        <a href="add-product.html" class="nav-btn active">➕ إضافة صنف</a>
+        <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
+        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
+        <a href="reports.html" class="nav-btn">📊 التقارير</a>
+    </div>
+
+    <h2 style="color:#10b981; margin-bottom:20px;">➕ 3. تعريف صنف جديد كلياً في المخزن</h2>
+
+    <div class="card">
+        <div class="grid">
+            <div>
+                <label>القسم / الشيت:</label>
+                <input type="text" id="newCategory" list="catDatalist" placeholder="اختر أو اكتب قسماً جديداً..." required>
+                <datalist id="catDatalist"></datalist>
+            </div>
+            <div>
+                <label>اسم الصنف الجديد:</label>
+                <input type="text" id="newItemName" placeholder="اسم المنتج..." required>
+            </div>
+            <div>
+                <label>الكمية الأولية المتوفرة:</label>
+                <input type="number" id="newInitialQty" value="1" min="0" step="0.1">
+            </div>
+            <div>
+                <label>الوحدة:</label>
+                <select id="newUnit">
+                    <option value="قطعه">قطعه</option>
+                    <option value="كيلو">كيلو</option>
+                    <option value="لتر">لتر</option>
+                    <option value="كيس">كيس</option>
+                    <option value="علبة">علبة</option>
+                    <option value="لفة">لفة</option>
+                </select>
+            </div>
+        </div>
+        <button onclick="addNewProduct()" class="btn-primary" id="newProdBtn" style="margin-top: 20px;">✨ حفظ الصنف في المخزن</button>
+    </div>
+
+    <script>
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
+        const activeToken = sessionStorage.getItem('adminPass') || 'admin123';
+
+        function errMsg(r) { return r && (r.error || (r.status === 'error' ? (r.message || 'خطأ في السيرفر') : '')); }
+
+        async function loadCategories() {
+            try {
+                const res = await fetch(inventoryURL);
+                const data = await res.json();
+                const cats = new Set(data.map(i => i.sheet).filter(Boolean));
+                const dl = document.getElementById('catDatalist');
+                dl.innerHTML = '';
+                cats.forEach(c => dl.innerHTML += `<option value="${c}">`);
+            } catch(e) {}
+        }
+
+        async function addNewProduct() {
+            const category = document.getElementById('newCategory').value.trim();
+            const itemName = document.getElementById('newItemName').value.trim();
+            const qty = document.getElementById('newInitialQty').value;
+            const unit = document.getElementById('newUnit').value;
+
+            if (!category || !itemName) return alert("يرجى إدخال القسم واسم الصنف!");
+
+            const btn = document.getElementById('newProdBtn');
+            btn.disabled = true; btn.innerText = "⏳ جاري الإضافة...";
+
+            let obj = { action: 'addNewItem', sheet: category, item: itemName, quantity: qty, unit: unit, pass: activeToken };
+
+            try {
+                const res = await fetch(inventoryURL, { method: 'POST', body: JSON.stringify(obj), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+                const result = await res.json();
+                if (errMsg(result)) alert("⚠️ " + errMsg(result));
+                else {
+                    alert(`✅ تم إضافة المنتج "${itemName}" للمخزن!`);
+                    document.getElementById('newCategory').value = ''; 
+                    document.getElementById('newItemName').value = '';
+                    document.getElementById('newInitialQty').value = 1;
+                }
+            } catch (error) { alert("⚠️ حدث خطأ أثناء الإضافة!"); } 
+            finally { btn.disabled = false; btn.innerText = "✨ حفظ الصنف في المخزن"; }
+        }
+
+        loadCategories();
+    </script>
+</body>
+</html>

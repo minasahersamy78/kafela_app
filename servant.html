@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الخدام - تقديم طلب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1000px; margin: auto; }
+        .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.9em; }
+        .nav-btn:hover, .nav-btn.active { background: #3b82f6; color: #fff; border-color: #60a5fa; }
+        .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
+        .card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media(max-width:600px){ .grid { grid-template-columns: 1fr; } }
+        label { font-weight: 600; color: #38bdf8; margin-bottom: 5px; display: block; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: white; font-family: 'Cairo'; box-sizing: border-box; }
+        .btn-add { background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; width: 100%; margin-top: 15px; }
+        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #2563eb, #10b981); color: white; font-size: 1.1em; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; font-family: 'Cairo'; margin-top: 15px; }
+        .table-container { overflow-x: auto; width: 100%; border-radius: 10px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; background: #0f172a; }
+        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #334155; }
+        th { background: #1e293b; color: #38bdf8; }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <a href="index.html" class="nav-btn nav-home">🏠 القائمة الرئيسية</a>
+        <a href="servant.html" class="nav-btn active">🛒 بوابة الخدام</a>
+        <a href="inventory.html" class="nav-btn">📦 رصيد المخزون</a>
+        <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
+        <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
+        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
+        <a href="reports.html" class="nav-btn">📊 التقارير</a>
+    </div>
+
+    <h2 style="color:#10b981;">🛒 1. بوابة الخدام - تقديم طلب جديد</h2>
+
+    <div class="card">
+        <h3>👤 بيانات الخادم الأساسية</h3>
+        <div class="grid">
+            <div><label>اسم الخادم:</label><input type="text" id="sName" placeholder="الاسم الثلاثي..." required></div>
+            <div><label>رقم التواصل:</label><input type="tel" id="sPhone" placeholder="رقم الموبايل..." required></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>➕ إضافة منتج للطلب الحالي</h3>
+        <div class="grid">
+            <div><label>القسم:</label><select id="cat" onchange="updateItems()"><option value="" disabled selected>اختر القسم...</option></select></div>
+            <div><label>اسم المنتج:</label><input type="text" id="item" list="itemList" placeholder="اكتب أو اختر المنتج..."><datalist id="itemList"></datalist></div>
+            <div>
+                <label>الوحدة:</label>
+                <select id="unit">
+                    <option value="قطعه">قطعه</option><option value="كيلو">كيلو</option><option value="لتر">لتر</option>
+                    <option value="كيس">كيس</option><option value="علبة">علبة</option><option value="لفة">لفة</option>
+                </select>
+            </div>
+            <div><label>الكمية المطلوبة:</label><input type="number" id="qty" min="0.1" step="0.1" placeholder="0"></div>
+            <div><label>تاريخ الاستخدام:</label><input type="date" id="date"></div>
+            <div><label>صورة المنتج (اختياري):</label><input type="file" id="img" accept="image/*"></div>
+        </div>
+        <button onclick="addToCart()" class="btn-add">إضافة هذا المنتج للسلة 🛒</button>
+    </div>
+
+    <div class="card" id="cartCard" style="display:none; border:2px solid #10b981;">
+        <h3>🛒 سلة الطلبات الحالية</h3>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>القسم</th><th>المنتج</th><th>الكمية</th><th>الوحدة</th><th>التاريخ</th><th>إلغاء</th></tr></thead>
+                <tbody id="cartTable"></tbody>
+            </table>
+        </div>
+        <button onclick="sendOrder()" class="btn-submit" id="sendBtn">🚀 إرسال الطلب بالكامل للإدارة</button>
+    </div>
+
+    <script>
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
+        const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        let invData = [], cart = [];
+
+        document.getElementById('date').valueAsDate = new Date();
+
+        async function init() {
+            try {
+                invData = await (await fetch(inventoryURL)).json();
+                const cats = new Set(invData.map(i => i.sheet).filter(Boolean));
+                const cSel = document.getElementById('cat');
+                cats.forEach(c => cSel.innerHTML += `<option value="${c}">${c}</option>`);
+            } catch(e) {}
+        }
+
+        function updateItems() {
+            const cat = document.getElementById('cat').value;
+            const dl = document.getElementById('itemList');
+            dl.innerHTML = '';
+            invData.filter(i => i.sheet === cat).forEach(i => dl.innerHTML += `<option value="${i.item}">`);
+        }
+
+        async function addToCart() {
+            const category = document.getElementById('cat').value;
+            const item = document.getElementById('item').value.trim();
+            const qty = parseFloat(document.getElementById('qty').value);
+            const unit = document.getElementById('unit').value;
+            const date = document.getElementById('date').value;
+            const file = document.getElementById('img').files[0];
+
+            if(!category || !item || !qty || qty <= 0) return alert('أكمل بيانات المنتج والكمية والقسم!');
+
+            let b64 = null, mType = null, iName = null;
+            if(file) {
+                b64 = await new Promise(res => {
+                    const r = new FileReader(); r.readAsDataURL(file);
+                    r.onload = () => res(r.result.split(',')[1]);
+                });
+                mType = file.type; iName = file.name;
+            }
+
+            cart.push({ category, item, qty, unit, date, imageBase64: b64, mimeType: mType, imageName: iName });
+            document.getElementById('item').value = '';
+            document.getElementById('qty').value = '';
+            document.getElementById('img').value = '';
+            renderCart();
+        }
+
+        function renderCart() {
+            const card = document.getElementById('cartCard');
+            const tbody = document.getElementById('cartTable');
+            if(!cart.length) { card.style.display = 'none'; return; }
+            card.style.display = 'block';
+            tbody.innerHTML = cart.map((c, i) => `<tr>
+                <td>${c.category}</td><td style="font-weight:bold;">${c.item}</td>
+                <td style="color:#10b981;font-weight:bold;">${c.qty}</td><td>${c.unit}</td><td>${c.date}</td>
+                <td><button onclick="cart.splice(${i},1);renderCart();" style="background:#ef4444;color:white;border:none;border-radius:5px;cursor:pointer;padding:4px 8px;">❌</button></td>
+            </tr>`).join('');
+        }
+
+        async function sendOrder() {
+            const name = document.getElementById('sName').value.trim();
+            const phone = document.getElementById('sPhone').value.trim();
+            if(!name || !phone) return alert('أدخل اسم الخادم ورقم التواصل بالأعلى أولاً!');
+
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true; btn.innerText = '⏳ جاري إرسال الطلبات...';
+
+            for(let p of cart) {
+                await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({
+                    action: 'add', category: p.category, requesterName: name, contactNumber: phone,
+                    item: p.item, qty: p.qty, unit: p.unit, date: p.date,
+                    imageBase64: p.imageBase64, mimeType: p.mimeType, imageName: p.imageName
+                })});
+            }
+
+            alert('✅ تم إرسال كل الطلبات للإدارة بنجاح!');
+            cart = []; renderCart();
+            btn.disabled = false; btn.innerText = '🚀 إرسال الطلب بالكامل للإدارة';
+        }
+
+        init();
+    </script>
+</body>
+</html>

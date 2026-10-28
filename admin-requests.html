@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الطلبات والتوريد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1150px; margin: auto; }
+        .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.9em; }
+        .nav-btn:hover, .nav-btn.active { background: #3b82f6; color: #fff; border-color: #60a5fa; }
+        .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
+        .form-container { background: #1e293b; padding: 20px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; }
+        .filter-container { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        input, select { padding: 12px; border-radius: 12px; border: 2px solid #334155; background: #0f172a; color: white; font-family: 'Cairo'; width: 100%; box-sizing: border-box; }
+        .btn-refresh { background: #3b82f6; color: white; border: none; padding: 12px 18px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
+        .table-container { overflow-x: auto; width: 100%; border-radius: 12px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; font-size: 0.95em; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; white-space: nowrap; }
+        th { background: #0f172a; color: #38bdf8; }
+        .btn-confirm { background: #10b981; color: white; padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%; }
+        .btn-delete { background: #ef4444; color: white; padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; }
+        .cat-badge { background: #0f172a; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; }
+        .status-fulfilled { color: #10b981; font-weight: bold; }
+        .status-partial { color: #f59e0b; font-weight: bold; }
+        .link-img { color: #38bdf8; font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <a href="index.html" class="nav-btn nav-home">🏠 القائمة الرئيسية</a>
+        <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
+        <a href="inventory.html" class="nav-btn">📦 رصيد المخزون</a>
+        <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
+        <a href="admin-requests.html" class="nav-btn active">📋 إدارة الطلبات</a>
+        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
+        <a href="reports.html" class="nav-btn">📊 التقارير</a>
+    </div>
+
+    <h2 style="color:#38bdf8; margin-bottom:20px;">📋 4. إدارة الطلبات والتوريد</h2>
+
+    <div class="form-container">
+        <div class="filter-container">
+            <div style="flex: 1;"><input type="text" id="searchInput" oninput="renderPurchaseTable()" placeholder="بحث بالاسم أو المنتج..."></div>
+            <div style="flex: 1;"><select id="filterCategory" onchange="renderPurchaseTable()"><option value="الكل">كل الأقسام</option></select></div>
+            <button class="btn-refresh" onclick="refreshAll()" id="refreshBtn">🔄 تحديث البيانات</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>القسم</th><th>الطالب</th><th>الموبايل</th><th>المنتج</th><th>الكمية</th><th>المتاح بالمخزن</th><th>صُرف</th><th>مطلوب شراء</th><th>التاريخ</th><th>الصورة</th><th>الحالة</th><th>الإجراءات</th></tr>
+                </thead>
+                <tbody id="purchaseTableBody"><tr><td colspan="12">⏳ جاري تحميل البيانات...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec'; 
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec'; 
+        const historyURL = 'https://script.google.com/macros/s/AKfycbxEadAjxysbvSYkCicB1AfmKP--JBPoNNHIwhE605rXk2o-z1pQxEi6PPdAhvWHkV9OSA/exec';
+        
+        const activeToken = sessionStorage.getItem('adminPass') || 'admin123';
+        let purchaseDataGlobal = [];
+        let inventoryDataGlobal = [];
+
+        const normAr = t => String(t || '').trim().toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه');
+        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        function errMsg(r) { return r && (r.error || (r.status === 'error' ? (r.message || 'خطأ في السيرفر') : '')); }
+
+        async function fetchPurchases() {
+            const r = await fetch(purchaseURL + "?pass=" + encodeURIComponent(activeToken));
+            const d = await r.json();
+            return Array.isArray(d) ? d : [];
+        }
+
+        async function syncHistory(rows) {
+            if (!historyURL) return;
+            try {
+                const list = (rows || purchaseDataGlobal).slice().sort((a, b) => (a.row || 0) - (b.row || 0));
+                if (!list.length) return;
+                await fetch(historyURL, { method: 'POST', body: JSON.stringify({ action: 'sync', pass: activeToken, rows: list }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+            } catch (e) {}
+        }
+
+        async function loadInventoryData() {
+            try {
+                const res = await fetch(inventoryURL);
+                inventoryDataGlobal = await res.json();
+            } catch (e) { console.error(e); }
+        }
+
+        async function reloadPurchaseData() {
+            try {
+                purchaseDataGlobal = await fetchPurchases();
+                purchaseDataGlobal = purchaseDataGlobal.reverse();
+                updateCategoryDropdown();
+                renderPurchaseTable();
+                syncHistory();
+            } catch (error) { console.error(error); }
+        }
+
+        async function refreshAll() {
+            const b = document.getElementById('refreshBtn');
+            b.disabled = true; b.innerText = '⏳...';
+            await loadInventoryData();
+            await reloadPurchaseData();
+            b.disabled = false; b.innerText = '🔄 تحديث البيانات';
+        }
+
+        function updateCategoryDropdown() {
+            const sel = document.getElementById('filterCategory');
+            const cur = sel.value;
+            const cats = [...new Set(purchaseDataGlobal.map(r => r.category).filter(Boolean))];
+            sel.innerHTML = '<option value="الكل">كل الأقسام</option>' + cats.map(c => `<option value="${escH(c)}">${escH(c)}</option>`).join('');
+            if (cats.includes(cur)) sel.value = cur;
+        }
+
+        function renderPurchaseTable() {
+            const tbody = document.getElementById('purchaseTableBody');
+            const filterValue = document.getElementById('filterCategory').value;
+            const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            tbody.innerHTML = '';
+            
+            let filteredData = purchaseDataGlobal.filter(row => {
+                const matchCat = filterValue === 'الكل' || row.category === filterValue;
+                const matchSearch = !searchVal || `${row.requesterName} ${row.item} ${row.contactNumber}`.toLowerCase().includes(searchVal);
+                return matchCat && matchSearch;
+            });
+
+            if (!filteredData || filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12">لا توجد طلبات.</td></tr>'; return;
+            }
+
+            filteredData.forEach(row => {
+                let statusClass = '', statusText = '';
+                let cat = row.category || '-', reqName = row.requesterName || '-', item = row.item || '-';
+                let reqQty = row.requested_qty || 0, unit = row.unit || '', fulfilled = row.fulfilled_from_stock || 0;
+                let needed = row.purchase_qty_needed || 0;
+
+                const isPending = row.status === 'PENDING_APPROVAL';
+                const isDone = row.status === 'PO_CONFIRMED';
+                const stockItem = inventoryDataGlobal.find(i => i.sheet === row.category && normAr(i.item) === normAr(row.item)) || inventoryDataGlobal.find(i => normAr(i.item) === normAr(row.item));
+                
+                let rem = 0;
+                let stockHtml = '<span style="color:#94a3b8">غير موجود</span>';
+                
+                if (stockItem) {
+                    rem = parseFloat(stockItem.remaining) || 0;
+                    const color = rem <= 0 ? '#ef4444' : (isPending && rem < (parseFloat(reqQty) || 0) ? '#f59e0b' : '#10b981');
+                    stockHtml = `<span style="color:${color}; font-weight:bold;">${escH(rem)} ${escH(stockItem.unit || unit)}</span>`;
+                }
+
+                if (isPending) { statusClass = 'status-partial'; statusText = needed > 0 ? 'بانتظار التأكيد ⏳' : 'بانتظار التوريد ⏳'; }
+                else if (isDone) { statusClass = 'status-fulfilled'; statusText = 'تم الشراء ✅'; }
+                else if (needed > 0) { statusClass = 'status-partial'; statusText = 'مطلوب شراء'; }
+                else { statusClass = 'status-fulfilled'; statusText = 'صُرف من المخزن ✅'; }
+
+                let supplyBtn = '';
+                let rejectBtn = '';
+                
+                if (isPending) {
+                    if (rem > 0) supplyBtn = `<button class="btn-confirm" style="background:#3b82f6;" onclick="approveRequest(${row.row}, this)">📦 سحب من المخزن</button>`;
+                    else supplyBtn = `<button class="btn-confirm" onclick="approveRequest(${row.row}, this)">🛒 شراء (اعتماد)</button>`;
+                    rejectBtn = `<button class="btn-delete" onclick="deletePurchaseRecord(${row.row}, this)">❌ إلغاء العملية</button>`;
+                } else if (needed > 0 && !isDone) {
+                    supplyBtn = `<button class="btn-confirm" onclick="confirmPurchaseOrder(${row.row}, this)">✅ تأكيد الشراء</button>`;
+                }
+
+                const actionHtml = (supplyBtn || rejectBtn) ? `<div style="min-width:120px;">${supplyBtn}${rejectBtn}</div>` : '-';
+                const imgCell = (row.image && String(row.image).startsWith('http')) ? `<a href="${escH(row.image)}" target="_blank" class="link-img">عرض 🖼️</a>` : '-';
+
+                tbody.innerHTML += `<tr>
+                    <td><span class="cat-badge">${escH(cat)}</span></td>
+                    <td style="color:#38bdf8; font-weight:bold;">${escH(reqName)}</td>
+                    <td>${escH(row.contactNumber || '-')}</td>
+                    <td style="font-weight:bold;">${escH(item)}</td>
+                    <td>${reqQty} ${unit}</td>
+                    <td>${stockHtml}</td>
+                    <td>${fulfilled} ${unit}</td>
+                    <td style="font-weight: bold; color: ${needed > 0 ? '#ef4444' : '#f8fafc'};">${needed > 0 ? needed + ' ' + unit : '0'}</td>
+                    <td>${escH(row.date)}</td>
+                    <td>${imgCell}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                    <td>${actionHtml}</td>
+                </tr>`;
+            });
+        }
+
+        async function approveRequest(rowNum, btn) {
+            if (!confirm('سيتم تطبيق خصم الكميات أو اعتماد الطلب للشراء الآن، هل أنت متأكد؟')) return;
+            let originalText = btn.innerText; btn.innerText = '⏳'; btn.disabled = true;
+            try {
+                const r = await (await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({ action: 'approve', row: rowNum, pass: activeToken }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })).json();
+                if (errMsg(r)) { alert('⚠️ ' + errMsg(r)); btn.innerText = originalText; btn.disabled = false; return; }
+                alert(`✅ تم تنفيذ العملية بنجاح!`);
+                await refreshAll();
+            } catch (e) { alert('⚠️ حدث خطأ!'); btn.innerText = originalText; btn.disabled = false; }
+        }
+
+        async function confirmPurchaseOrder(rowNum, btn) {
+            if(!confirm('📦 تأكيد: هل تم الشراء وتوريد الصنف؟')) return;
+            let originalText = btn.innerText; btn.innerText = '⏳'; btn.disabled = true;
+            try {
+                const r = await (await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({ action: 'confirmAndAdd', row: rowNum, pass: activeToken }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })).json();
+                if (errMsg(r)) { alert('⚠️ ' + errMsg(r)); btn.innerText = originalText; btn.disabled = false; return; }
+                alert('✅ تم التأكيد والتحديث!'); await refreshAll();
+            } catch (e) { alert('⚠️ حدث خطأ!'); btn.innerText = originalText; btn.disabled = false; }
+        }
+
+        async function deletePurchaseRecord(rowNum, btn) {
+            if(!confirm('⚠️ هل أنت متأكد من إلغاء الطلب؟')) return;
+            let originalText = btn.innerText; btn.innerText = '⏳'; btn.disabled = true;
+            try {
+                const rj = await (await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({ action: 'reject', row: rowNum, pass: activeToken }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })).json();
+                if (errMsg(rj)) { alert('⚠️ ' + errMsg(rj)); btn.innerText = originalText; btn.disabled = false; return; }
+                alert('✅ تم إلغاء العملية.'); await refreshAll();
+            } catch (e) { alert('⚠️ حدث خطأ.'); btn.innerText = originalText; btn.disabled = false; }
+        }
+
+        refreshAll();
+    </script>
+</body>
+</html>
