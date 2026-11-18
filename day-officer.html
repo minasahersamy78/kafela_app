@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة مسؤولين الأيام والأقسام - مخزن القافلة</title>
+    <title>بوابة مسؤولين الأيام والأقسام - أسرة الأنبا ابرام</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1000px; margin: auto; box-sizing: border-box; }
-        .header { text-align: center; padding: 28px 20px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #3b82f6; }
-        .header h1 { margin: 0; font-size: 1.85em; color: #38bdf8; }
+        .header { text-align: center; padding: 28px 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #a855f7; }
+        .logo-container { width: 95px; height: 95px; background: #fff; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; border: 3px solid #a855f7; overflow: hidden; }
+        .logo-container img { width: 90%; height: 90%; object-fit: contain; }
+        .header h1 { margin: 0; font-size: 1.85em; color: #c084fc; }
         .header p { color: #cbd5e1; margin: 8px 0 0; font-weight: 600; }
 
         .nav-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .nav-btn { flex: 1; min-width: 160px; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 700; background: #1e293b; color: #38bdf8; border: 1px solid #3b82f6; }
+        .nav-btn { flex: 1; min-width: 160px; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 700; background: #1e293b; color: #38bdf8; border: 1px solid #3b82f6; transition: 0.2s; }
+        .nav-btn:hover { background: #1e3a8a; }
 
         .card { background: #1e293b; padding: 24px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        .card h3 { margin: 0 0 18px; color: #38bdf8; font-size: 1.25em; }
+        .card h3 { margin: 0 0 18px; color: #c084fc; font-size: 1.25em; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px; }
         label { display: block; color: #93c5fd; font-weight: 700; margin-bottom: 6px; font-size: 0.95em; }
         input, select { width: 100%; padding: 12px 14px; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #f8fafc; font-family: 'Cairo'; font-size: 15px; box-sizing: border-box; }
-        input:focus, select:focus { border-color: #3b82f6; outline: none; }
+        input:focus, select:focus { border-color: #a855f7; outline: none; }
 
-        .btn-submit { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #2563eb 0%, #10b981 100%); color: #fff; font-family: 'Cairo'; font-size: 17px; font-weight: 700; cursor: pointer; }
+        .btn-submit { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #7e22ce 0%, #2563eb 100%); color: #fff; font-family: 'Cairo'; font-size: 17px; font-weight: 700; cursor: pointer; }
         .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #334155; }
         table { width: 100%; border-collapse: collapse; background: #1e293b; font-size: 0.92em; }
         th, td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; }
-        th { background: #0f172a; color: #38bdf8; }
+        th { background: #0f172a; color: #c084fc; }
         .status-ready { color: #10b981; font-weight: 700; }
         .status-wait { color: #f59e0b; font-weight: 700; }
     </style>
@@ -35,13 +38,14 @@
 <body>
 
     <div class="header">
-        <h1>📅 بوابة مسؤولين الأيام والمعرض والمسابقات</h1>
+        <div class="logo-container"><img src="logo.jpg" alt="شعار القافلة" onerror="this.style.display='none';"></div>
+        <h1>📅 بوابة مسؤولين الأيام والأقسام</h1>
         <p>سجّل احتياجات يومك أو قسمك ليتم تجهيزها وتسليمها عبر مسؤول اليوم التحضيري</p>
     </div>
 
     <div class="nav-row">
-        <a href="preparatory.html" class="nav-btn" style="color:#34d399; border-color:#10b981;">📦 الانتقال لبوابة مسؤول اليوم التحضيري</a>
-        <a href="admin.html" class="nav-btn">🛡️ لوحة تحكم الأدمن</a>
+        <a href="index.html" class="nav-btn">🏠 الرئيسية</a>
+        <a href="preparatory.html" class="nav-btn" style="color:#34d399; border-color:#10b981;">✅ بوابة اليوم التحضيري</a>
     </div>
 
     <div class="card">
@@ -100,9 +104,9 @@
 
     <div class="card">
         <h3>📋 متابعة حالة طلبات اليوم / القسم المحدد</h3>
-        <div style="margin-bottom:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div id="passBox" style="margin-bottom:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
             <input type="password" id="viewPass" placeholder="أدخل كلمة مرور النظام لعرض حالة الطلبات..." style="max-width:320px;">
-            <button onclick="loadMyRequests()" style="padding:12px 20px; border-radius:10px; border:none; background:#3b82f6; color:#fff; font-family:'Cairo'; font-weight:700; cursor:pointer;">عرض الطلبات 🔄</button>
+            <button onclick="loadMyRequests()" style="padding:12px 20px; border-radius:10px; border:none; background:#7e22ce; color:#fff; font-family:'Cairo'; font-weight:700; cursor:pointer;">عرض الطلبات 🔄</button>
         </div>
         <div class="table-container">
             <table>
@@ -117,7 +121,7 @@
                     </tr>
                 </thead>
                 <tbody id="myRequestsBody">
-                    <tr><td colspan="6">أدخل كلمة المرور واضغط "عرض الطلبات" لمتابعة التجهيز.</td></tr>
+                    <tr><td colspan="6">⏳ جاري التحقق من الجلسة...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -184,7 +188,7 @@
                 if (result.error) {
                     alert('⚠️ ' + result.error);
                 } else {
-                    alert(`✅ تم تسجيل طلبك بنجاح تحت بند (${role})! سيظهر عند الأدمن للاعتماد ثم عند مسؤول اليوم التحضيري.`);
+                    alert(`✅ تم تسجيل طلبك بنجاح تحت بند (${role})! سيظهر في إدارة الطلبات للاعتماد ثم عند مسؤول اليوم التحضيري.`);
                     document.getElementById('reqItem').value = '';
                     document.getElementById('reqQty').value = 1;
                     loadMyRequests();
@@ -198,11 +202,14 @@
 
         async function loadMyRequests() {
             const pass = document.getElementById('viewPass').value || sessionStorage.getItem('adminPass') || '';
-            if (!pass) return;
+            const tbody = document.getElementById('myRequestsBody');
+            if (!pass) {
+                tbody.innerHTML = '<tr><td colspan="6">أدخل كلمة المرور واضغط "عرض الطلبات" لمتابعة التجهيز.</td></tr>';
+                return;
+            }
             try { sessionStorage.setItem('adminPass', pass); } catch (e) {}
 
             const role = document.getElementById('officerRole').value;
-            const tbody = document.getElementById('myRequestsBody');
             tbody.innerHTML = '<tr><td colspan="6">⏳ جاري التحميل...</td></tr>';
 
             try {
@@ -212,6 +219,7 @@
                     tbody.innerHTML = `<tr><td colspan="6" style="color:#ef4444;">❌ ${escH(data.error)}</td></tr>`;
                     return;
                 }
+                document.getElementById('passBox').style.display = 'none';
                 const filtered = (Array.isArray(data) ? data : []).filter(r => {
                     const raw = String(r.requesterName || '');
                     return r.targetDay === role || raw.startsWith(`[${role}]`);
@@ -224,7 +232,7 @@
 
                 tbody.innerHTML = filtered.map(r => {
                     const cleanName = String(r.requesterName || '').replace(/^\[.*?\]\s*/, '');
-                    let st = '<span class="status-wait">بانتظار اعتماد الأدمن ⏳</span>';
+                    let st = '<span class="status-wait">بانتظار الاعتماد ⏳</span>';
                     if (r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED') {
                         st = '<span class="status-ready">جاهز عند مسؤول اليوم التحضيري ✅</span>';
                     } else if ((parseFloat(r.purchase_qty_needed) || 0) > 0 && r.status !== 'PENDING_APPROVAL') {
@@ -248,7 +256,8 @@
             await initStock();
             try {
                 const p = sessionStorage.getItem('adminPass');
-                if (p) { document.getElementById('viewPass').value = p; loadMyRequests(); }
+                if (p) { document.getElementById('viewPass').value = p; await loadMyRequests(); }
+                else { document.getElementById('myRequestsBody').innerHTML = '<tr><td colspan="6">أدخل كلمة المرور واضغط "عرض الطلبات" لمتابعة التجهيز.</td></tr>'; }
             } catch (e) {}
         })();
     </script>
