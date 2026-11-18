@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بوابة مسؤول اليوم التحضيري - مخزن القافلة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1150px; margin: auto; box-sizing: border-box; }
+        .header { text-align: center; padding: 28px 20px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #10b981; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15); }
+        .header h1 { margin: 0; font-size: 1.9em; color: #34d399; }
+        .header p { color: #cbd5e1; margin: 8px 0 0; font-weight: 600; }
+
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 40px; background: #1e293b; padding: 35px; border-radius: 20px; border: 1px solid #334155; max-width: 400px; margin-left: auto; margin-right: auto; }
+        #login-error { color: #ef4444; display: none; margin-top: 12px; font-weight: bold; }
+        #prep-content { display: none; }
+
+        .top-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .btn { padding: 12px 18px; font-family: 'Cairo'; font-size: 15px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; text-decoration: none; text-align: center; transition: 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #10b981 0%, #2563eb 100%); color: #fff; flex: 1; }
+        .btn-outline { background: #1e293b; color: #38bdf8; border: 1px solid #3b82f6; }
+        .btn-print { background: #334155; color: #f8fafc; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 22px; }
+        .kpi-card { background: #1e293b; padding: 18px; border-radius: 16px; border: 1px solid #334155; text-align: center; }
+        .kpi-num { font-size: 2em; font-weight: 700; color: #38bdf8; }
+        .kpi-num.green { color: #10b981; }
+        .kpi-num.amber { color: #f59e0b; }
+        .kpi-label { color: #94a3b8; font-size: 0.95em; font-weight: 600; }
+
+        .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; }
+        .tab-btn { padding: 9px 16px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #cbd5e1; font-family: 'Cairo'; font-weight: 700; cursor: pointer; font-size: 0.92em; transition: 0.2s; }
+        .tab-btn.active { background: #10b981; color: #0f172a; border-color: #10b981; }
+
+        .form-box { background: #1e293b; padding: 20px; border-radius: 18px; border: 1px solid #334155; margin-bottom: 25px; }
+        .form-box h3 { margin: 0 0 15px; color: #34d399; font-size: 1.15em; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        input, select { width: 100%; padding: 11px 14px; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: #f8fafc; font-family: 'Cairo'; font-size: 14px; box-sizing: border-box; }
+        input:focus, select:focus { border-color: #10b981; outline: none; }
+
+        .table-container { overflow-x: auto; border-radius: 14px; border: 1px solid #334155; background: #1e293b; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+        th, td { padding: 13px 10px; text-align: center; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #34d399; font-weight: 700; }
+        tr.completed-row { background: rgba(16, 185, 129, 0.08); }
+        tr.completed-row td.item-title { text-decoration: line-through; color: #94a3b8; }
+
+        .check-pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 10px; border: 2px solid #334155; background: #0f172a; cursor: pointer; font-weight: 700; font-size: 0.88em; user-select: none; transition: 0.2s; }
+        .check-pill.checked-recv { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .check-pill.checked-deliv { border-color: #10b981; background: rgba(16, 185, 129, 0.22); color: #6ee7b7; }
+        .check-pill input { width: 18px; height: 18px; margin: 0; accent-color: #10b981; cursor: pointer; }
+
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.85em; font-weight: 700; }
+        .badge-day { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid #3b82f6; }
+        .badge-src-stock { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge-src-buy { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge-src-manual { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; }
+        .btn-del-small { background: #ef4444; color: #fff; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-family: 'Cairo'; font-size: 0.82em; }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .top-actions, .tabs, .form-box, .no-print { display: none !important; }
+            table, th, td { border: 1px solid #000; color: #000 !important; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📦 بوابة مسؤول اليوم التحضيري</h1>
+        <p>استلام الأصناف المجهزة من المخزن والمشتريات وتسليمها لمسؤولين الأيام والأقسام</p>
+    </div>
+
+    <div id="login-screen">
+        <label style="color:#34d399; font-size:1.15em; margin-bottom:12px; font-weight: bold;">أدخل كلمة مرور النظام:</label>
+        <input type="password" id="prepPass" placeholder="كلمة المرور..." onkeypress="if(event.key === 'Enter') loginPrep()">
+        <button id="loginBtn" onclick="loginPrep()" style="margin-top: 15px; width: 100%;" class="btn btn-primary">دخول لبوابة التحضير</button>
+        <div id="login-error">❌ كلمة المرور غير صحيحة</div>
+    </div>
+
+    <div id="prep-content">
+        <div class="top-actions">
+            <button class="btn btn-primary" id="syncBtn" onclick="loadPrepItems()">🔄 تحديث القائمة من المخزن والمشتريات</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ طباعة كشف التسليم</button>
+            <a href="day-officer.html" class="btn btn-outline">📅 بوابة مسؤولين الأيام</a>
+            <a href="admin.html" class="btn btn-outline">🛡️ لوحة الأدمن</a>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-num" id="kpiTotal">0</div><div class="kpi-label">إجمالي البنود الجاهزة</div></div>
+            <div class="kpi-card"><div class="kpi-num" id="kpiReceived">0</div><div class="kpi-label">تم استلامه عهدة التحضيري 📥</div></div>
+            <div class="kpi-card"><div class="kpi-num green" id="kpiDelivered">0</div><div class="kpi-label">تم تسليمه لمسؤول اليوم 🚀</div></div>
+            <div class="kpi-card"><div class="kpi-num amber" id="kpiPending">0</div><div class="kpi-label">متبقي لم يُسلّم بعد ⏳</div></div>
+        </div>
+
+        <div class="tabs" id="dayTabs">
+            <button class="tab-btn active" onclick="setDayFilter('الكل', this)">الكل</button>
+            <button class="tab-btn" onclick="setDayFilter('اليوم الأول', this)">اليوم الأول</button>
+            <button class="tab-btn" onclick="setDayFilter('اليوم الثاني', this)">اليوم الثاني</button>
+            <button class="tab-btn" onclick="setDayFilter('اليوم الثالث', this)">اليوم الثالث</button>
+            <button class="tab-btn" onclick="setDayFilter('اليوم الرابع', this)">اليوم الرابع</button>
+            <button class="tab-btn" onclick="setDayFilter('مسؤول المعرض', this)">مسؤول المعرض</button>
+            <button class="tab-btn" onclick="setDayFilter('مسؤول مسابقات الأهالي', this)">مسؤول مسابقات الأهالي</button>
+            <button class="tab-btn" onclick="setDayFilter('عام', this)">عام / أخرى</button>
+        </div>
+
+        <!-- إضافة بند خارجي للتشيك ليست -->
+        <div class="form-box">
+            <h3>➕ إضافة بند خارجي / عهدة إضافية إلى التشيك ليست</h3>
+            <form onsubmit="addManualItem(event)">
+                <div class="form-grid">
+                    <input type="text" id="mItem" placeholder="اسم الصنف أو العهدة..." required>
+                    <input type="number" id="mQty" placeholder="الكمية" min="0.1" step="0.1" value="1" required>
+                    <select id="mUnit">
+                        <option value="قطعه">قطعه</option>
+                        <option value="كيلو">كيلو</option>
+                        <option value="لتر">لتر</option>
+                        <option value="كيس">كيس</option>
+                        <option value="علبة">علبة</option>
+                        <option value="كرتونة">كرتونة</option>
+                    </select>
+                    <select id="mDay">
+                        <option value="اليوم الأول">اليوم الأول</option>
+                        <option value="اليوم الثاني">اليوم الثاني</option>
+                        <option value="اليوم الثالث">اليوم الثالث</option>
+                        <option value="اليوم الرابع">اليوم الرابع</option>
+                        <option value="مسؤول المعرض">مسؤول المعرض</option>
+                        <option value="مسؤول مسابقات الأهالي">مسؤول مسابقات الأهالي</option>
+                        <option value="عام">عام / أخرى</option>
+                    </select>
+                    <input type="text" id="mOfficer" placeholder="اسم المسؤول المستلم (اختياري)">
+                    <button type="submit" class="btn btn-primary">إضافة للقائمة ✅</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>اليوم / الجهة المستلمة</th>
+                        <th>الصنف</th>
+                        <th>الكمية الجاهزة</th>
+                        <th>المصدر</th>
+                        <th>المسؤول الطالب</th>
+                        <th>1️⃣ استلام من المصدر 📥</th>
+                        <th>2️⃣ تسليم لمسؤول اليوم 🚀</th>
+                        <th class="no-print">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="prepTableBody">
+                    <tr><td colspan="8">⏳ جاري تحميل قائمة التحضير...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        // (اختياري) ضع هنا رابط Apps Script إذا أضفت دالة حفظ التشيك ليست سحابياً
+        const prepSyncURL = ''; 
+
+        let activeToken = '';
+        let currentDayFilter = 'الكل';
+        let systemItems = [];
+
+        const STORAGE_CHECKS_KEY = 'kafela_prep_checks_v1';
+        const STORAGE_MANUAL_KEY = 'kafela_prep_manual_v1';
+
+        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        function getChecksState() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_CHECKS_KEY) || '{}'); } catch (e) { return {}; }
+        }
+        function saveChecksState(state) {
+            try { localStorage.setItem(STORAGE_CHECKS_KEY, JSON.stringify(state)); } catch (e) {}
+            if (prepSyncURL) {
+                fetch(prepSyncURL, { method: 'POST', body: JSON.stringify({ action: 'savePrepState', pass: activeToken, checks: state, manual: getManualItems() }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(() => {});
+            }
+        }
+        function getManualItems() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_MANUAL_KEY) || '[]'); } catch (e) { return []; }
+        }
+        function saveManualItems(list) {
+            try { localStorage.setItem(STORAGE_MANUAL_KEY, JSON.stringify(list)); } catch (e) {}
+            if (prepSyncURL) {
+                fetch(prepSyncURL, { method: 'POST', body: JSON.stringify({ action: 'savePrepState', pass: activeToken, checks: getChecksState(), manual: list }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(() => {});
+            }
+        }
+
+        function parseDayAndRequester(row) {
+            const rawName = String(row.requesterName || 'غير مسجل');
+            if (row.targetDay && String(row.targetDay).trim()) {
+                return { day: String(row.targetDay).trim(), cleanName: rawName.replace(/^\[.*?\]\s*/, '') };
+            }
+            const m = rawName.match(/^\[(.*?)\]\s*(.*)$/);
+            if (m) return { day: m[1].trim(), cleanName: m[2].trim() || 'غير مسجل' };
+            return { day: 'عام', cleanName: rawName };
+        }
+
+        async function loginPrep() {
+            const passInput = document.getElementById('prepPass').value;
+            const btn = document.getElementById('loginBtn');
+            const err = document.getElementById('login-error');
+            btn.disabled = true; btn.innerText = '⏳ جاري الدخول...'; err.style.display = 'none';
+
+            try {
+                const res = await fetch(purchaseURL + '?pass=' + encodeURIComponent(passInput));
+                const data = await res.json();
+                if (data.error) {
+                    err.innerText = '❌ ' + data.error; err.style.display = 'block';
+                } else {
+                    activeToken = passInput;
+                    try { sessionStorage.setItem('adminPass', passInput); } catch (e) {}
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('prep-content').style.display = 'block';
+                    processPurchaseRows(Array.isArray(data) ? data : []);
+                }
+            } catch (e) {
+                err.innerText = '⚠️ تعذر الاتصال بالسيرفر.'; err.style.display = 'block';
+            } finally {
+                btn.disabled = false; btn.innerText = 'دخول لبوابة التحضير';
+            }
+        }
+
+        function processPurchaseRows(rows) {
+            // نأخذ كل الطلبات الجاهزة (تم التوريد من المخزن أو تم الشراء والتوريد أو صُرف جزء منها)
+            systemItems = rows
+                .filter(r => r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED' || (parseFloat(r.fulfilled_from_stock) || 0) > 0)
+                .map(r => {
+                    const { day, cleanName } = parseDayAndRequester(r);
+                    const fulfilled = parseFloat(r.fulfilled_from_stock) || 0;
+                    const bought = (r.status === 'PO_CONFIRMED') ? (parseFloat(r.purchase_qty_needed) || 0) : 0;
+                    const readyQty = (fulfilled + bought) || parseFloat(r.requested_qty) || 0;
+                    let sourceLabel = 'مخزن + مشتريات';
+                    let sourceClass = 'badge-src-stock';
+                    if (fulfilled > 0 && bought === 0) { sourceLabel = 'من المخزن 📦'; sourceClass = 'badge-src-stock'; }
+                    else if (bought > 0 && fulfilled === 0) { sourceLabel = 'تم شراؤه 🛒'; sourceClass = 'badge-src-buy'; }
+
+                    return {
+                        uid: `sys_${r.row}_${r.item}_${r.date}`,
+                        day,
+                        item: r.item,
+                        category: r.category,
+                        qty: readyQty,
+                        unit: r.unit || 'قطعه',
+                        sourceLabel,
+                        sourceClass,
+                        officer: cleanName,
+                        isManual: false
+                    };
+                });
+            renderPrepTable();
+        }
+
+        async function loadPrepItems() {
+            const btn = document.getElementById('syncBtn');
+            btn.disabled = true; btn.innerText = '⏳ جاري التحديث...';
+            try {
+                const res = await fetch(purchaseURL + '?pass=' + encodeURIComponent(activeToken));
+                const data = await res.json();
+                if (Array.isArray(data)) processPurchaseRows(data);
+            } catch (e) {
+                alert('⚠️ خطأ أثناء تحديث البيانات');
+            } finally {
+                btn.disabled = false; btn.innerText = '🔄 تحديث القائمة من المخزن والمشتريات';
+            }
+        }
+
+        function setDayFilter(day, btnEl) {
+            currentDayFilter = day;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            renderPrepTable();
+        }
+
+        function toggleCheck(uid, field) {
+            const checks = getChecksState();
+            checks[uid] = checks[uid] || { received: false, delivered: false };
+            checks[uid][field] = !checks[uid][field];
+            // إذا تم التسليم لمسؤول اليوم، يُعتبر تلقائياً أنه استُلم من المصدر
+            if (field === 'delivered' && checks[uid].delivered) {
+                checks[uid].received = true;
+            }
+            saveChecksState(checks);
+            renderPrepTable();
+        }
+
+        function addManualItem(e) {
+            e.preventDefault();
+            const manual = getManualItems();
+            const newEntry = {
+                uid: 'man_' + Date.now(),
+                day: document.getElementById('mDay').value,
+                item: document.getElementById('mItem').value.trim(),
+                qty: parseFloat(document.getElementById('mQty').value) || 1,
+                unit: document.getElementById('mUnit').value,
+                sourceLabel: 'إضافة يدوية ✍️',
+                sourceClass: 'badge-src-manual',
+                officer: document.getElementById('mOfficer').value.trim() || 'مسؤول اليوم',
+                isManual: true
+            };
+            manual.unshift(newEntry);
+            saveManualItems(manual);
+            document.getElementById('mItem').value = '';
+            document.getElementById('mQty').value = 1;
+            renderPrepTable();
+        }
+
+        function deleteManualItem(uid) {
+            if (!confirm('حذف هذا البند اليدوي من التشيك ليست؟')) return;
+            const manual = getManualItems().filter(x => x.uid !== uid);
+            saveManualItems(manual);
+            renderPrepTable();
+        }
+
+        function renderPrepTable() {
+            const tbody = document.getElementById('prepTableBody');
+            const checks = getChecksState();
+            const allItems = [...getManualItems(), ...systemItems];
+
+            const filtered = allItems.filter(it => currentDayFilter === 'الكل' || it.day === currentDayFilter);
+
+            // تحديث المؤشرات
+            let recvCount = 0, delivCount = 0;
+            filtered.forEach(it => {
+                const st = checks[it.uid] || {};
+                if (st.received) recvCount++;
+                if (st.delivered) delivCount++;
+            });
+            document.getElementById('kpiTotal').textContent = filtered.length;
+            document.getElementById('kpiReceived').textContent = recvCount;
+            document.getElementById('kpiDelivered').textContent = delivCount;
+            document.getElementById('kpiPending').textContent = Math.max(0, filtered.length - delivCount);
+
+            if (!filtered.length) {
+                tbody.innerHTML = '<tr><td colspan="8">لا توجد أصناف جاهزة لهذا اليوم حالياً.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(it => {
+                const st = checks[it.uid] || { received: false, delivered: false };
+                const rowClass = st.delivered ? 'completed-row' : '';
+                return `<tr class="${rowClass}">
+                    <td><span class="badge badge-day">${escH(it.day)}</span></td>
+                    <td class="item-title" style="font-weight:700;">${escH(it.item)} ${it.category ? `<small style="color:#94a3b8;">(${escH(it.category)})</small>` : ''}</td>
+                    <td style="font-weight:700; color:#38bdf8;">${escH(it.qty)} ${escH(it.unit)}</td>
+                    <td><span class="badge ${it.sourceClass}">${escH(it.sourceLabel)}</span></td>
+                    <td>${escH(it.officer)}</td>
+                    <td>
+                        <label class="check-pill ${st.received ? 'checked-recv' : ''}">
+                            <input type="checkbox" ${st.received ? 'checked' : ''} onchange="toggleCheck('${escH(it.uid)}', 'received')">
+                            ${st.received ? 'تم الاستلام ✅' : 'استلام'}
+                        </label>
+                    </td>
+                    <td>
+                        <label class="check-pill ${st.delivered ? 'checked-deliv' : ''}">
+                            <input type="checkbox" ${st.delivered ? 'checked' : ''} onchange="toggleCheck('${escH(it.uid)}', 'delivered')">
+                            ${st.delivered ? 'تم التسليم 🚀' : 'تسليم'}
+                        </label>
+                    </td>
+                    <td class="no-print">${it.isManual ? `<button class="btn-del-small" onclick="deleteManualItem('${escH(it.uid)}')">🗑️</button>` : '-'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        (async () => {
+            try {
+                const p = sessionStorage.getItem('adminPass');
+                if (p) { document.getElementById('prepPass').value = p; await loginPrep(); }
+            } catch (e) {}
+        })();
+    </script>
+</body>
+</html>

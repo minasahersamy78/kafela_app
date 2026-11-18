@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بوابة مسؤولين الأيام والأقسام - مخزن القافلة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1000px; margin: auto; box-sizing: border-box; }
+        .header { text-align: center; padding: 28px 20px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #3b82f6; }
+        .header h1 { margin: 0; font-size: 1.85em; color: #38bdf8; }
+        .header p { color: #cbd5e1; margin: 8px 0 0; font-weight: 600; }
+
+        .nav-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .nav-btn { flex: 1; min-width: 160px; padding: 12px; border-radius: 12px; text-align: center; text-decoration: none; font-weight: 700; background: #1e293b; color: #38bdf8; border: 1px solid #3b82f6; }
+
+        .card { background: #1e293b; padding: 24px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .card h3 { margin: 0 0 18px; color: #38bdf8; font-size: 1.25em; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px; }
+        label { display: block; color: #93c5fd; font-weight: 700; margin-bottom: 6px; font-size: 0.95em; }
+        input, select { width: 100%; padding: 12px 14px; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #f8fafc; font-family: 'Cairo'; font-size: 15px; box-sizing: border-box; }
+        input:focus, select:focus { border-color: #3b82f6; outline: none; }
+
+        .btn-submit { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #2563eb 0%, #10b981 100%); color: #fff; font-family: 'Cairo'; font-size: 17px; font-weight: 700; cursor: pointer; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; font-size: 0.92em; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #38bdf8; }
+        .status-ready { color: #10b981; font-weight: 700; }
+        .status-wait { color: #f59e0b; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📅 بوابة مسؤولين الأيام والمعرض والمسابقات</h1>
+        <p>سجّل احتياجات يومك أو قسمك ليتم تجهيزها وتسليمها عبر مسؤول اليوم التحضيري</p>
+    </div>
+
+    <div class="nav-row">
+        <a href="preparatory.html" class="nav-btn" style="color:#34d399; border-color:#10b981;">📦 الانتقال لبوابة مسؤول اليوم التحضيري</a>
+        <a href="admin.html" class="nav-btn">🛡️ لوحة تحكم الأدمن</a>
+    </div>
+
+    <div class="card">
+        <h3>➕ إضافة احتياجات جديدة لليوم / القسم</h3>
+        <form id="officerForm" onsubmit="submitDayNeed(event)">
+            <div class="grid">
+                <div>
+                    <label>اختر يومك أو قسمك المسؤول عنه:</label>
+                    <select id="officerRole" onchange="loadMyRequests()" required>
+                        <option value="اليوم الأول">اليوم الأول (مسؤولين الأيام)</option>
+                        <option value="اليوم الثاني">اليوم الثاني (مسؤولين الأيام)</option>
+                        <option value="اليوم الثالث">اليوم الثالث (مسؤولين الأيام)</option>
+                        <option value="اليوم الرابع">اليوم الرابع (مسؤولين الأيام)</option>
+                        <option value="مسؤول المعرض">مسؤول المعرض</option>
+                        <option value="مسؤول مسابقات الأهالي">مسؤول مسابقات الأهالي</option>
+                    </select>
+                </div>
+                <div>
+                    <label>اسم المسؤول:</label>
+                    <input type="text" id="officerName" placeholder="اكتب اسمك..." required>
+                </div>
+                <div>
+                    <label>رقم الموبايل للتواصل:</label>
+                    <input type="tel" id="officerPhone" placeholder="01xxxxxxxxx" required>
+                </div>
+                <div>
+                    <label>اسم الصنف المطلوب:</label>
+                    <input type="text" id="reqItem" list="stockItemsList" placeholder="اختر من المخزن أو اكتب صنفاً جديداً..." oninput="autoFillStock()" required>
+                    <datalist id="stockItemsList"></datalist>
+                </div>
+                <div>
+                    <label>القسم التابع له الصنف:</label>
+                    <select id="reqCategory" required>
+                        <option value="" disabled selected>-- اختر القسم --</option>
+                    </select>
+                </div>
+                <div>
+                    <label>الكمية المطلوبة:</label>
+                    <input type="number" id="reqQty" min="0.1" step="0.1" value="1" required>
+                </div>
+                <div>
+                    <label>الوحدة:</label>
+                    <select id="reqUnit" required>
+                        <option value="قطعه">قطعه</option>
+                        <option value="كيلو">كيلو</option>
+                        <option value="لتر">لتر</option>
+                        <option value="كيس">كيس</option>
+                        <option value="علبة">علبة</option>
+                        <option value="لفة">لفة</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">إرسال الطلب للتجهيز 🚀</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>📋 متابعة حالة طلبات اليوم / القسم المحدد</h3>
+        <div style="margin-bottom:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <input type="password" id="viewPass" placeholder="أدخل كلمة مرور النظام لعرض حالة الطلبات..." style="max-width:320px;">
+            <button onclick="loadMyRequests()" style="padding:12px 20px; border-radius:10px; border:none; background:#3b82f6; color:#fff; font-family:'Cairo'; font-weight:700; cursor:pointer;">عرض الطلبات 🔄</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الصنف</th>
+                        <th>القسم</th>
+                        <th>الكمية</th>
+                        <th>المسؤول</th>
+                        <th>التاريخ</th>
+                        <th>حالة التجهيز عند اليوم التحضيري</th>
+                    </tr>
+                </thead>
+                <tbody id="myRequestsBody">
+                    <tr><td colspan="6">أدخل كلمة المرور واضغط "عرض الطلبات" لمتابعة التجهيز.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
+        let stockList = [];
+
+        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        async function initStock() {
+            try {
+                const res = await fetch(inventoryURL);
+                stockList = await res.json();
+                const dl = document.getElementById('stockItemsList');
+                const catSel = document.getElementById('reqCategory');
+                const cats = new Set();
+                stockList.forEach(i => {
+                    if (i.item) dl.innerHTML += `<option value="${escH(i.item)}">`;
+                    if (i.sheet) cats.add(i.sheet);
+                });
+                cats.forEach(c => {
+                    catSel.innerHTML += `<option value="${escH(c)}">${escH(c)}</option>`;
+                });
+                catSel.innerHTML += `<option value="أخرى">أخرى</option>`;
+            } catch (e) { console.error(e); }
+        }
+
+        function autoFillStock() {
+            const val = document.getElementById('reqItem').value.trim().toLowerCase();
+            const found = stockList.find(i => i.item && i.item.toLowerCase() === val);
+            if (found) {
+                document.getElementById('reqCategory').value = found.sheet;
+                document.getElementById('reqUnit').value = found.unit;
+            }
+        }
+
+        async function submitDayNeed(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true; btn.innerText = '⏳ جاري إرسال الطلب...';
+
+            const role = document.getElementById('officerRole').value;
+            const name = document.getElementById('officerName').value.trim();
+            const today = new Date().toISOString().split('T')[0];
+
+            const payload = {
+                action: 'add',
+                category: document.getElementById('reqCategory').value,
+                targetDay: role,
+                requesterName: `[${role}] ${name}`,
+                contactNumber: document.getElementById('officerPhone').value.trim(),
+                item: document.getElementById('reqItem').value.trim(),
+                qty: document.getElementById('reqQty').value,
+                unit: document.getElementById('reqUnit').value,
+                date: today
+            };
+
+            try {
+                const res = await fetch(purchaseURL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+                const result = await res.json();
+                if (result.error) {
+                    alert('⚠️ ' + result.error);
+                } else {
+                    alert(`✅ تم تسجيل طلبك بنجاح تحت بند (${role})! سيظهر عند الأدمن للاعتماد ثم عند مسؤول اليوم التحضيري.`);
+                    document.getElementById('reqItem').value = '';
+                    document.getElementById('reqQty').value = 1;
+                    loadMyRequests();
+                }
+            } catch (err) {
+                alert('⚠️ حدث خطأ أثناء الإرسال.');
+            } finally {
+                btn.disabled = false; btn.innerText = 'إرسال الطلب للتجهيز 🚀';
+            }
+        }
+
+        async function loadMyRequests() {
+            const pass = document.getElementById('viewPass').value || sessionStorage.getItem('adminPass') || '';
+            if (!pass) return;
+            try { sessionStorage.setItem('adminPass', pass); } catch (e) {}
+
+            const role = document.getElementById('officerRole').value;
+            const tbody = document.getElementById('myRequestsBody');
+            tbody.innerHTML = '<tr><td colspan="6">⏳ جاري التحميل...</td></tr>';
+
+            try {
+                const res = await fetch(purchaseURL + '?pass=' + encodeURIComponent(pass));
+                const data = await res.json();
+                if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="color:#ef4444;">❌ ${escH(data.error)}</td></tr>`;
+                    return;
+                }
+                const filtered = (Array.isArray(data) ? data : []).filter(r => {
+                    const raw = String(r.requesterName || '');
+                    return r.targetDay === role || raw.startsWith(`[${role}]`);
+                }).reverse();
+
+                if (!filtered.length) {
+                    tbody.innerHTML = `<tr><td colspan="6">لا توجد طلبات مسجلة حالياً لـ (${escH(role)}).</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = filtered.map(r => {
+                    const cleanName = String(r.requesterName || '').replace(/^\[.*?\]\s*/, '');
+                    let st = '<span class="status-wait">بانتظار اعتماد الأدمن ⏳</span>';
+                    if (r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED') {
+                        st = '<span class="status-ready">جاهز عند مسؤول اليوم التحضيري ✅</span>';
+                    } else if ((parseFloat(r.purchase_qty_needed) || 0) > 0 && r.status !== 'PENDING_APPROVAL') {
+                        st = '<span class="status-wait">معتمد وجاري شراؤه 🛒</span>';
+                    }
+                    return `<tr>
+                        <td style="font-weight:700;">${escH(r.item)}</td>
+                        <td>${escH(r.category)}</td>
+                        <td>${escH(r.requested_qty)} ${escH(r.unit)}</td>
+                        <td>${escH(cleanName)}</td>
+                        <td>${escH(r.date)}</td>
+                        <td>${st}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="6">⚠️ تعذر تحميل البيانات.</td></tr>';
+            }
+        }
+
+        (async () => {
+            await initStock();
+            try {
+                const p = sessionStorage.getItem('adminPass');
+                if (p) { document.getElementById('viewPass').value = p; loadMyRequests(); }
+            } catch (e) {}
+        })();
+    </script>
+</body>
+</html>
