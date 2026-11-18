@@ -61,10 +61,192 @@
         .badge-src-manual { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; }
         .btn-del-small { background: #ef4444; color: #fff; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-family: 'Cairo'; font-size: 0.82em; }
 
+        /* عناصر تظهر فقط في الطباعة وملف الـ PDF */
+        .print-only { display: none; }
+
+        /* تنسيق مخصص للطباعة وتصدير PDF على الموبايل والكمبيوتر */
         @media print {
-            body { background: #fff; color: #000; }
-            .top-nav, .top-actions, .tabs, .form-box, .no-print { display: none !important; }
-            table, th, td { border: 1px solid #000; color: #000 !important; background: #fff !important; }
+            @page {
+                size: A4 landscape;
+                margin: 8mm;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 10.5pt !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .top-nav, .top-actions, .tabs, .form-box, .no-print, #login-screen {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            /* ترويسة التقرير */
+            .header {
+                background: #f8fafc !important;
+                border: 2px solid #0f172a !important;
+                border-radius: 10px !important;
+                box-shadow: none !important;
+                padding: 10px 14px !important;
+                margin-bottom: 10px !important;
+            }
+            .header h1 {
+                color: #0f172a !important;
+                font-size: 15pt !important;
+                margin: 0 !important;
+            }
+            .header p {
+                color: #334155 !important;
+                font-size: 9.5pt !important;
+                margin: 3px 0 0 !important;
+            }
+
+            .print-meta-bar {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                border: 1px solid #64748b !important;
+                background: #f1f5f9 !important;
+                padding: 6px 12px !important;
+                border-radius: 8px !important;
+                margin-bottom: 10px !important;
+                font-size: 9.5pt !important;
+                font-weight: 700 !important;
+                color: #0f172a !important;
+            }
+
+            /* تحويل بطاقات الإحصائيات لصف أفقي مضغوط */
+            .kpi-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+                margin-bottom: 12px !important;
+            }
+            .kpi-card {
+                background: #ffffff !important;
+                border: 1px solid #64748b !important;
+                border-radius: 8px !important;
+                padding: 6px 8px !important;
+            }
+            .kpi-num, .kpi-num.green, .kpi-num.amber {
+                font-size: 13pt !important;
+                color: #000000 !important;
+            }
+            .kpi-label {
+                font-size: 8.5pt !important;
+                color: #1e293b !important;
+            }
+
+            /* فك السكرول الأفقي وضبط أعمدة الجدول */
+            .table-container {
+                overflow: visible !important;
+                width: 100% !important;
+                border: none !important;
+                border-radius: 0 !important;
+                background: #ffffff !important;
+            }
+
+            table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                border-collapse: collapse !important;
+                background: #ffffff !important;
+                font-size: 9pt !important;
+            }
+
+            thead {
+                display: table-header-group !important;
+            }
+
+            tr {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                background: #ffffff !important;
+            }
+
+            th, td {
+                border: 1px solid #334155 !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 6px 5px !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                vertical-align: middle !important;
+                text-align: center !important;
+            }
+
+            th {
+                background: #e2e8f0 !important;
+                color: #000000 !important;
+                font-weight: 700 !important;
+                font-size: 9.2pt !important;
+            }
+
+            /* توزيع عرض الأعمدة السبعة بدقة لمنع التداخل */
+            th:nth-child(1), td:nth-child(1) { width: 14%; }
+            th:nth-child(2), td:nth-child(2) { width: 22%; }
+            th:nth-child(3), td:nth-child(3) { width: 11%; }
+            th:nth-child(4), td:nth-child(4) { width: 12%; }
+            th:nth-child(5), td:nth-child(5) { width: 13%; }
+            th:nth-child(6), td:nth-child(6) { width: 14%; }
+            th:nth-child(7), td:nth-child(7) { width: 14%; }
+
+            /* إجبار النصوص ذات الألوان الفاتحة المدمجة على الظهور بالأسود */
+            td[style], td small, .item-title, tr.completed-row td.item-title {
+                color: #000000 !important;
+            }
+
+            .badge, .badge-day, .badge-src-stock, .badge-src-buy, .badge-src-manual {
+                background: transparent !important;
+                color: #000000 !important;
+                border: 1px solid #94a3b8 !important;
+                padding: 2px 5px !important;
+                font-size: 8.2pt !important;
+                display: inline-block !important;
+            }
+
+            .check-pill, .check-pill.checked-recv, .check-pill.checked-deliv {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 4px !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                border: 1px solid #475569 !important;
+                padding: 3px 6px !important;
+                border-radius: 5px !important;
+                font-size: 8.2pt !important;
+            }
+
+            .check-pill input[type="checkbox"] {
+                width: 12px !important;
+                height: 12px !important;
+                accent-color: #000000 !important;
+            }
+
+            .print-signatures {
+                display: flex !important;
+                justify-content: space-between !important;
+                margin-top: 18px !important;
+                padding-top: 10px !important;
+                border-top: 1px dashed #64748b !important;
+                font-size: 9.5pt !important;
+                font-weight: 700 !important;
+                color: #000000 !important;
+                break-inside: avoid !important;
+            }
         }
     </style>
 </head>
@@ -97,7 +279,13 @@
     <div id="prep-content">
         <div class="top-actions">
             <button class="btn btn-primary" id="syncBtn" onclick="loadPrepItems()">🔄 تحديث القائمة من المخزن والمشتريات</button>
-            <button class="btn btn-print" onclick="window.print()">🖨️ طباعة كشف التسليم</button>
+            <button class="btn btn-print" onclick="printPrepSheet()">🖨️ طباعة / حفظ كشف التسليم PDF</button>
+        </div>
+
+        <!-- شريط معلومات يظهر في ملف الـ PDF فقط -->
+        <div class="print-only print-meta-bar">
+            <span>📌 كشف التسليم — التصفية: <span id="printFilterLabel">الكل</span></span>
+            <span>📅 تاريخ الطباعة: <span id="printDateTime"></span></span>
         </div>
 
         <div class="kpi-grid">
@@ -170,6 +358,12 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- خانات التوقيع تظهر في ملف الـ PDF فقط -->
+        <div class="print-only print-signatures">
+            <div>توقيع مسؤول اليوم التحضيري: ______________________</div>
+            <div>توقيع مسؤول اليوم / القسم المستلم: ______________________</div>
+        </div>
     </div>
 
     <script>
@@ -184,6 +378,17 @@
         const STORAGE_MANUAL_KEY = 'kafela_prep_manual_v1';
 
         const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        function printPrepSheet() {
+            const filterEl = document.getElementById('printFilterLabel');
+            const dateEl = document.getElementById('printDateTime');
+            if (filterEl) filterEl.textContent = currentDayFilter;
+            if (dateEl) {
+                const now = new Date();
+                dateEl.textContent = now.toLocaleDateString('ar-EG') + ' — ' + now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            }
+            window.print();
+        }
 
         function getChecksState() {
             try { return JSON.parse(localStorage.getItem(STORAGE_CHECKS_KEY) || '{}'); } catch (e) { return {}; }
