@@ -6,9 +6,9 @@
     <title>إدارة رصيد المخزون</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1100px; margin: auto; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1150px; margin: auto; }
         .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
-        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.9em; }
+        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 13px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.88em; }
         .nav-btn:hover, .nav-btn.active { background: #3b82f6; color: #fff; border-color: #60a5fa; }
         .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
         .card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; }
@@ -31,13 +31,15 @@
 </head>
 <body>
     <div class="top-nav">
-        <a href="index.html" class="nav-btn nav-home">🏠 القائمة الرئيسية</a>
+        <a href="index.html" class="nav-btn nav-home">🏠 الرئيسية</a>
         <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
-        <a href="inventory.html" class="nav-btn active">📦 رصيد المخزون</a>
+        <a href="inventory.html" class="nav-btn active">📦 المخزون</a>
         <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
         <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
         <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
         <a href="reports.html" class="nav-btn">📊 التقارير</a>
+        <a href="preparatory.html" class="nav-btn">✅ اليوم التحضيري</a>
+        <a href="day-officer.html" class="nav-btn">📅 مسؤولين الأيام</a>
     </div>
 
     <h2 style="color:#38bdf8; margin-bottom:20px;">📦 2. إدارة رصيد المخزون</h2>
@@ -120,7 +122,7 @@
                     groupedData[sheetName].forEach(item => {
                         let option = document.createElement('option');
                         option.value = `${item.sheet}|${item.item}`;
-                        option.textContent = `${item.item} (${item.unit})`;
+                        option.textContent = `${item.item} — (المتاح: ${item.remaining} ${item.unit})`;
                         optGroup.appendChild(option);
                     });
                     itemSelect.appendChild(optGroup);
@@ -178,6 +180,14 @@
             const [sheet, item] = selectVal.split('|');
             let amount = parseFloat(document.getElementById('amountInput').value) || 0;
             if (amount <= 0) return alert("يرجى إدخال كمية صحيحة!");
+
+            if (action === 'subtract') {
+                const found = inventoryDataGlobal.find(i => i.sheet === sheet && i.item === item);
+                const rem = found ? (parseFloat(found.remaining) || 0) : 0;
+                if (amount > rem) {
+                    return alert(`⚠️ لا يمكن سحب (${amount}) لأن المتاح في المخزن من "${item}" هو (${rem}) فقط!`);
+                }
+            }
 
             document.getElementById('addBtn').disabled = true;
             document.getElementById('subBtn').disabled = true;
