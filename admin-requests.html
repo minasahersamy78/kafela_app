@@ -52,9 +52,8 @@
     </div>
 
     <h2 style="color:#38bdf8; margin-bottom:15px;">📋 4. إدارة الطلبات والتوريد</h2>
-    <div class="notify-bar">
-        <span id="notifyStatusText">🔔 تنبيهات الطلبات الجديدة: مفعّلة تلقائياً (فحص كل 30 ثانية)</span>
-        <button type="button" class="btn-notify" onclick="enableBrowserNotifications(true)">🔔 تفعيل إشعارات الموبايل والصوت</button>
+    <div class="notify-bar" style="justify-content: center; text-align: center;">
+        <span id="notifyStatusText">🔔 نظام الإشعارات والتنبيهات التلقائية نشط (فحص كل 30 ثانية)</span>
     </div>
     <div id="newOrderToast" class="toast-alert"></div>
 
@@ -362,6 +361,19 @@
                 renderPurchaseTable();
             } catch (e) {}
         }, 30000);
+
+
+        // طلب إذن الإشعارات تلقائياً عند أول تفاعل للمستخدم مع الصفحة
+        document.addEventListener('click', function autoRequestPerm() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(perm => {
+                    const st = document.getElementById('notifyStatusText');
+                    if (perm === 'granted') {
+                        st.textContent = '✅ إشعارات الموبايل والصوت مفعّلة تلقائياً';
+                    }
+                });
+            }
+        }, { once: true });
 
         refreshAll();
         if ('serviceWorker' in navigator) {
