@@ -6,10 +6,13 @@
     <title>بوابة مسؤول اليوم التحضيري - أسرة الأنبا ابرام</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1100px; margin: auto; box-sizing: border-box; }
-        .header { text-align: center; padding: 28px 20px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #10b981; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15); }
-        .logo-container { width: 95px; height: 95px; background: #fff; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; border: 3px solid #10b981; overflow: hidden; }
-        .logo-container img { width: 90%; height: 90%; object-fit: contain; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1150px; margin: auto; box-sizing: border-box; }
+        .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 13px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.88em; transition: 0.2s; }
+        .nav-btn:hover, .nav-btn.active { background: #10b981; color: #0f172a; border-color: #34d399; }
+        .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
+
+        .header { text-align: center; padding: 24px 20px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #10b981; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15); }
         .header h1 { margin: 0; font-size: 1.85em; color: #34d399; }
         .header p { color: #cbd5e1; margin: 8px 0 0; font-weight: 600; }
 
@@ -20,8 +23,6 @@
         .top-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .btn { padding: 12px 18px; font-family: 'Cairo'; font-size: 15px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; text-decoration: none; text-align: center; transition: 0.2s; }
         .btn-primary { background: linear-gradient(135deg, #10b981 0%, #2563eb 100%); color: #fff; flex: 1; min-width: 210px; }
-        .btn-outline { background: #1e293b; color: #38bdf8; border: 1px solid #3b82f6; }
-        .btn-outline:hover { background: #1e3a8a; }
         .btn-print { background: #334155; color: #f8fafc; }
 
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 22px; }
@@ -32,12 +33,12 @@
         .kpi-label { color: #94a3b8; font-size: 0.95em; font-weight: 600; }
 
         .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; }
-        .tab-btn { padding: 9px 16px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #cbd5e1; font-family: 'Cairo'; font-weight: 700; cursor: pointer; font-size: 0.92em; transition: 0.2s; }
+        .tab-btn { padding: 9px 15px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #cbd5e1; font-family: 'Cairo'; font-weight: 700; cursor: pointer; font-size: 0.9em; transition: 0.2s; }
         .tab-btn.active { background: #10b981; color: #0f172a; border-color: #10b981; }
 
         .form-box { background: #1e293b; padding: 20px; border-radius: 18px; border: 1px solid #334155; margin-bottom: 25px; }
         .form-box h3 { margin: 0 0 15px; color: #34d399; font-size: 1.15em; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; }
         input, select { width: 100%; padding: 11px 14px; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: #f8fafc; font-family: 'Cairo'; font-size: 14px; box-sizing: border-box; }
         input:focus, select:focus { border-color: #10b981; outline: none; }
 
@@ -62,15 +63,26 @@
 
         @media print {
             body { background: #fff; color: #000; }
-            .top-actions, .tabs, .form-box, .no-print { display: none !important; }
+            .top-nav, .top-actions, .tabs, .form-box, .no-print { display: none !important; }
             table, th, td { border: 1px solid #000; color: #000 !important; background: #fff !important; }
         }
     </style>
 </head>
 <body>
 
+    <div class="top-nav">
+        <a href="index.html" class="nav-btn nav-home">🏠 الرئيسية</a>
+        <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
+        <a href="inventory.html" class="nav-btn">📦 المخزون</a>
+        <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
+        <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
+        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
+        <a href="reports.html" class="nav-btn">📊 التقارير</a>
+        <a href="preparatory.html" class="nav-btn active">✅ اليوم التحضيري</a>
+        <a href="day-officer.html" class="nav-btn">📅 مسؤولين الأيام</a>
+    </div>
+
     <div class="header">
-        <div class="logo-container"><img src="logo.jpg" alt="شعار القافلة" onerror="this.style.display='none';"></div>
         <h1>✅ بوابة مسؤول اليوم التحضيري</h1>
         <p>استلام الأصناف المجهزة من المخزن والمشتريات وتسليمها لمسؤولين الأيام والأقسام</p>
     </div>
@@ -79,14 +91,11 @@
         <label style="color:#34d399; font-size:1.15em; margin-bottom:12px; font-weight: bold;">🔐 أدخل كلمة مرور النظام:</label>
         <input type="password" id="prepPass" placeholder="كلمة المرور..." onkeypress="if(event.key === 'Enter') loginPrep()">
         <button id="loginBtn" onclick="loginPrep()" style="margin-top: 15px; width: 100%;" class="btn btn-primary">دخول لبوابة التحضير</button>
-        <a href="index.html" style="color:#94a3b8; margin-top:15px; text-decoration:none; font-size:0.95em;">🏠 العودة للبوابة الرئيسية</a>
         <div id="login-error">❌ كلمة المرور غير صحيحة</div>
     </div>
 
     <div id="prep-content">
         <div class="top-actions">
-            <a href="index.html" class="btn btn-outline">🏠 الرئيسية</a>
-            <a href="day-officer.html" class="btn btn-outline" style="color:#c084fc; border-color:#a855f7;">📅 مسؤولين الأيام والأقسام</a>
             <button class="btn btn-primary" id="syncBtn" onclick="loadPrepItems()">🔄 تحديث القائمة من المخزن والمشتريات</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ طباعة كشف التسليم</button>
         </div>
@@ -107,6 +116,7 @@
             <button class="tab-btn" onclick="setDayFilter('الأكل', this)">الأكل</button>
             <button class="tab-btn" onclick="setDayFilter('المعرض', this)">المعرض</button>
             <button class="tab-btn" onclick="setDayFilter('مسابقات الأهالي', this)">مسابقات الأهالي</button>
+            <button class="tab-btn" onclick="setDayFilter('عام', this)">طلبات عامة</button>
         </div>
 
         <!-- إضافة بند خارجي للتشيك ليست -->
@@ -114,7 +124,8 @@
             <h3>➕ إضافة بند خارجي / عهدة إضافية إلى التشيك ليست</h3>
             <form onsubmit="addManualItem(event)">
                 <div class="form-grid">
-                    <input type="text" id="mItem" placeholder="اسم الصنف أو العهدة..." required>
+                    <input type="text" id="mItem" list="prepStockDatalist" placeholder="اسم الصنف أو العهدة..." required>
+                    <datalist id="prepStockDatalist"></datalist>
                     <input type="number" id="mQty" placeholder="الكمية" min="0.1" step="0.1" value="1" required>
                     <select id="mUnit">
                         <option value="قطعه">قطعه</option>
@@ -132,6 +143,7 @@
                         <option value="الأكل">الأكل</option>
                         <option value="المعرض">المعرض</option>
                         <option value="مسابقات الأهالي">مسابقات الأهالي</option>
+                        <option value="عام">طلبات عامة</option>
                     </select>
                     <input type="text" id="mOfficer" placeholder="اسم المسؤول المستلم (اختياري)">
                     <button type="submit" class="btn btn-primary">إضافة للقائمة ✅</button>
@@ -162,6 +174,7 @@
 
     <script>
         const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
 
         let activeToken = '';
         let currentDayFilter = 'الكل';
@@ -195,6 +208,17 @@
             return { day: 'عام', cleanName: rawName };
         }
 
+        async function loadStockSuggestions() {
+            try {
+                const res = await fetch(inventoryURL);
+                const list = await res.json();
+                const dl = document.getElementById('prepStockDatalist');
+                if (Array.isArray(list)) {
+                    dl.innerHTML = list.filter(i => i.item).map(i => `<option value="${escH(i.item)}">`).join('');
+                }
+            } catch (e) {}
+        }
+
         async function loginPrep() {
             const passInput = document.getElementById('prepPass').value;
             const btn = document.getElementById('loginBtn');
@@ -222,7 +246,7 @@
 
         function processPurchaseRows(rows) {
             systemItems = rows
-                .filter(r => r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED' || (parseFloat(r.fulfilled_from_stock) || 0) > 0)
+                .filter(r => r.status !== 'REJECTED' && (r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED' || (parseFloat(r.fulfilled_from_stock) || 0) > 0))
                 .map(r => {
                     const { day, cleanName } = parseDayAndRequester(r);
                     const fulfilled = parseFloat(r.fulfilled_from_stock) || 0;
@@ -328,7 +352,7 @@
             document.getElementById('kpiPending').textContent = Math.max(0, filtered.length - delivCount);
 
             if (!filtered.length) {
-                tbody.innerHTML = '<tr><td colspan="8">لا توجد أصناف جاهزة لهذا اليوم حالياً.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8">لا توجد أصناف جاهزة لهذا التبويب حالياً.</td></tr>';
                 return;
             }
 
@@ -359,6 +383,7 @@
         }
 
         (async () => {
+            loadStockSuggestions();
             try {
                 const p = sessionStorage.getItem('adminPass');
                 if (p) { document.getElementById('prepPass').value = p; await loginPrep(); }
