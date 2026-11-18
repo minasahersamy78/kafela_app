@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة مسؤول اليوم التحضيري - مخزن القافلة</title>
+    <title>بوابة مسؤول اليوم التحضيري - أسرة الأنبا ابرام</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1150px; margin: auto; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1100px; margin: auto; box-sizing: border-box; }
         .header { text-align: center; padding: 28px 20px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #10b981; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15); }
-        .header h1 { margin: 0; font-size: 1.9em; color: #34d399; }
+        .logo-container { width: 95px; height: 95px; background: #fff; border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; border: 3px solid #10b981; overflow: hidden; }
+        .logo-container img { width: 90%; height: 90%; object-fit: contain; }
+        .header h1 { margin: 0; font-size: 1.85em; color: #34d399; }
         .header p { color: #cbd5e1; margin: 8px 0 0; font-weight: 600; }
 
-        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 40px; background: #1e293b; padding: 35px; border-radius: 20px; border: 1px solid #334155; max-width: 400px; margin-left: auto; margin-right: auto; }
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 35px; background: #1e293b; padding: 35px; border-radius: 20px; border: 1px solid #334155; max-width: 400px; margin-left: auto; margin-right: auto; }
         #login-error { color: #ef4444; display: none; margin-top: 12px; font-weight: bold; }
         #prep-content { display: none; }
 
         .top-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .btn { padding: 12px 18px; font-family: 'Cairo'; font-size: 15px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; text-decoration: none; text-align: center; transition: 0.2s; }
-        .btn-primary { background: linear-gradient(135deg, #10b981 0%, #2563eb 100%); color: #fff; flex: 1; }
+        .btn-primary { background: linear-gradient(135deg, #10b981 0%, #2563eb 100%); color: #fff; flex: 1; min-width: 210px; }
         .btn-outline { background: #1e293b; color: #38bdf8; border: 1px solid #3b82f6; }
+        .btn-outline:hover { background: #1e3a8a; }
         .btn-print { background: #334155; color: #f8fafc; }
 
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 22px; }
@@ -67,23 +70,25 @@
 <body>
 
     <div class="header">
-        <h1>📦 بوابة مسؤول اليوم التحضيري</h1>
+        <div class="logo-container"><img src="logo.jpg" alt="شعار القافلة" onerror="this.style.display='none';"></div>
+        <h1>✅ بوابة مسؤول اليوم التحضيري</h1>
         <p>استلام الأصناف المجهزة من المخزن والمشتريات وتسليمها لمسؤولين الأيام والأقسام</p>
     </div>
 
     <div id="login-screen">
-        <label style="color:#34d399; font-size:1.15em; margin-bottom:12px; font-weight: bold;">أدخل كلمة مرور النظام:</label>
+        <label style="color:#34d399; font-size:1.15em; margin-bottom:12px; font-weight: bold;">🔐 أدخل كلمة مرور النظام:</label>
         <input type="password" id="prepPass" placeholder="كلمة المرور..." onkeypress="if(event.key === 'Enter') loginPrep()">
         <button id="loginBtn" onclick="loginPrep()" style="margin-top: 15px; width: 100%;" class="btn btn-primary">دخول لبوابة التحضير</button>
+        <a href="index.html" style="color:#94a3b8; margin-top:15px; text-decoration:none; font-size:0.95em;">🏠 العودة للبوابة الرئيسية</a>
         <div id="login-error">❌ كلمة المرور غير صحيحة</div>
     </div>
 
     <div id="prep-content">
         <div class="top-actions">
+            <a href="index.html" class="btn btn-outline">🏠 الرئيسية</a>
+            <a href="day-officer.html" class="btn btn-outline" style="color:#c084fc; border-color:#a855f7;">📅 مسؤولين الأيام والأقسام</a>
             <button class="btn btn-primary" id="syncBtn" onclick="loadPrepItems()">🔄 تحديث القائمة من المخزن والمشتريات</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ طباعة كشف التسليم</button>
-            <a href="day-officer.html" class="btn btn-outline">📅 بوابة مسؤولين الأيام</a>
-            <a href="admin.html" class="btn btn-outline">🛡️ لوحة الأدمن</a>
         </div>
 
         <div class="kpi-grid">
@@ -157,8 +162,6 @@
 
     <script>
         const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
-        // (اختياري) ضع هنا رابط Apps Script إذا أضفت دالة حفظ التشيك ليست سحابياً
-        const prepSyncURL = ''; 
 
         let activeToken = '';
         let currentDayFilter = 'الكل';
@@ -174,18 +177,12 @@
         }
         function saveChecksState(state) {
             try { localStorage.setItem(STORAGE_CHECKS_KEY, JSON.stringify(state)); } catch (e) {}
-            if (prepSyncURL) {
-                fetch(prepSyncURL, { method: 'POST', body: JSON.stringify({ action: 'savePrepState', pass: activeToken, checks: state, manual: getManualItems() }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(() => {});
-            }
         }
         function getManualItems() {
             try { return JSON.parse(localStorage.getItem(STORAGE_MANUAL_KEY) || '[]'); } catch (e) { return []; }
         }
         function saveManualItems(list) {
             try { localStorage.setItem(STORAGE_MANUAL_KEY, JSON.stringify(list)); } catch (e) {}
-            if (prepSyncURL) {
-                fetch(prepSyncURL, { method: 'POST', body: JSON.stringify({ action: 'savePrepState', pass: activeToken, checks: getChecksState(), manual: list }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(() => {});
-            }
         }
 
         function parseDayAndRequester(row) {
@@ -224,7 +221,6 @@
         }
 
         function processPurchaseRows(rows) {
-            // نأخذ كل الطلبات الجاهزة (تم التوريد من المخزن أو تم الشراء والتوريد أو صُرف جزء منها)
             systemItems = rows
                 .filter(r => r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED' || (parseFloat(r.fulfilled_from_stock) || 0) > 0)
                 .map(r => {
@@ -278,7 +274,6 @@
             const checks = getChecksState();
             checks[uid] = checks[uid] || { received: false, delivered: false };
             checks[uid][field] = !checks[uid][field];
-            // إذا تم التسليم لمسؤول اليوم، يُعتبر تلقائياً أنه استُلم من المصدر
             if (field === 'delivered' && checks[uid].delivered) {
                 checks[uid].received = true;
             }
@@ -321,7 +316,6 @@
 
             const filtered = allItems.filter(it => currentDayFilter === 'الكل' || it.day === currentDayFilter);
 
-            // تحديث المؤشرات
             let recvCount = 0, delivCount = 0;
             filtered.forEach(it => {
                 const st = checks[it.uid] || {};
