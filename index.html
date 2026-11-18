@@ -2,412 +2,105 @@
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة التحكم الشاملة - مخزن القافلة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أسرة الأنبا ابرام - البوابة الرئيسية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1150px; margin: auto; box-sizing: border-box; }
-        .header { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #1e40af; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15); position: relative; }
-        .logo-container { width: 120px; height: 120px; background-color: #ffffff; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(37, 99, 235, 0.5), 0 0 10px rgba(16, 185, 129, 0.4); border: 4px solid #3b82f6; overflow: hidden; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1050px; margin: auto; }
+        .header { text-align: center; padding: 30px; background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(16,185,129,0.15)); border-radius: 20px; border: 2px solid #1e40af; margin-bottom: 30px; }
+        .logo-container { width: 120px; height: 120px; background: #fff; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border: 4px solid #3b82f6; overflow: hidden; box-shadow: 0 0 20px rgba(59,130,246,0.4); }
         .logo-container img { width: 90%; height: 90%; object-fit: contain; }
-        .header h1 { margin: 5px 0 0; font-size: 2em; color: #3b82f6; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; background: #1e293b; padding: 40px; border-radius: 20px; border: 1px solid #334155; max-width: 400px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        
+        /* شاشة تسجيل الدخول */
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 30px; background: #1e293b; padding: 40px; border-radius: 20px; border: 1px solid #334155; max-width: 400px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
         #login-error { color: #ef4444; display: none; margin-top: 15px; font-weight: bold; font-size: 1.1em;}
-        #admin-content { display: none; }
+        input { width: 100%; padding: 12px; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #fff; font-family: 'Cairo'; box-sizing: border-box; }
+        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #10b981 100%); color: #ffffff; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1em; font-family: 'Cairo'; margin-top: 15px; }
 
-        .nav-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; }
-        .nav-link { flex: 1; min-width: 170px; text-align: center; padding: 12px 15px; border-radius: 10px; text-decoration: none; font-weight: 700; color: #f8fafc; background: #0f172a; border: 1px solid #3b82f6; transition: 0.2s; }
-        .nav-link:hover { background: #1e40af; }
-        .nav-link.prep { border-color: #10b981; color: #34d399; }
-        .nav-link.prep:hover { background: #065f46; color: #fff; }
-
-        .section-header { background: linear-gradient(90deg, #1e40af, #0f172a); color: white; padding: 15px 20px; border-radius: 12px; margin: 25px 0 15px; font-size: 1.35em; font-weight: 700; border-right: 5px solid #38bdf8; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background 0.3s ease, transform 0.1s ease; }
-        .section-header:hover { opacity: 0.95; }
-        .toggle-icon { font-size: 0.8em; transition: transform 0.3s ease; color: #38bdf8; }
-        .section-header.collapsed .toggle-icon { transform: rotate(-90deg); }
-        .section-body.collapsed { display: none; }
-
-        .form-container { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 25px; width: 100%; box-sizing: border-box;}
-        .form-container h3 { margin-top: 0; color: #38bdf8; font-size: 1.25em; font-weight: 700; margin-bottom: 20px; }
-        .grid { display: flex; flex-direction: column; gap: 18px; margin-bottom: 20px; width: 100%; }
-        .grid > div { width: 100%; box-sizing: border-box; }
-        @media (min-width: 768px) { .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; } }
-        label { font-weight: 600; color: #38bdf8; margin-bottom: 8px; display: block; font-size: 1em; }
-        select, input { width: 100%; display: block; padding: 12px 15px; border: 2px solid #334155; border-radius: 12px; background-color: #0f172a; color: #f8fafc; font-family: 'Cairo', sans-serif; font-size: 15px; box-sizing: border-box; transition: all 0.3s ease; }
-        select:focus, input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
-        .btn-group { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;}
-        button { flex: 1; padding: 14px; font-family: 'Cairo'; font-size: 17px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-        button:active { transform: scale(0.98); }
-        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #10b981 100%); color: #ffffff; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
-        .btn-add { background: #10b981; color: #fff; }
-        .btn-sub { background: transparent; color: #ef4444; border: 2px solid #ef4444; }
-        .filter-container { background: #1e293b; padding: 18px; border-radius: 15px; border: 1px solid #334155; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;}
-        .table-container { overflow-x: auto; width: 100%; border-radius: 12px; border: 1px solid #334155; margin-bottom: 30px;}
-        table { width: 100%; border-collapse: collapse; background: #1e293b; overflow: hidden; font-size: 0.92em; }
-        th, td { padding: 11px; text-align: center; border-bottom: 1px solid #334155; white-space: nowrap; }
-        th { background: #0f172a; color: #38bdf8; font-weight: 700; font-size: 1em; }
-        tbody tr:hover { background: rgba(51, 65, 85, 0.4); }
-        .btn-delete { background: #ef4444; color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.9em; transition: 0.2s;}
-        .btn-confirm { background: #10b981; color: white; padding: 8px 12px; border-radius: 8px; font-size: 0.9em; margin-left: 5px; transition: 0.2s; }
-        .cat-badge { background: #0f172a; padding: 4px 10px; border-radius: 8px; font-size: 0.88em; border: 1px solid #334155; color: #f8fafc; }
-        .day-badge { background: rgba(59, 130, 246, 0.2); padding: 4px 10px; border-radius: 8px; font-size: 0.88em; border: 1px solid #3b82f6; color: #93c5fd; font-weight: 700; }
-        .status-fulfilled { color: #10b981; font-weight: bold; }
-        .status-partial { color: #f59e0b; font-weight: bold; }
-        .link-img { color: #38bdf8; font-weight: bold; text-decoration: underline; }
+        /* القائمة الرئيسية */
+        #main-content { display: none; }
+        .grid-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card-link { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 18px; text-decoration: none; color: white; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .card-link:hover { border-color: #3b82f6; transform: translateY(-4px); box-shadow: 0 10px 25px rgba(59,130,246,0.25); }
+        .card-icon { font-size: 2.5em; }
+        .card-title { font-size: 1.3em; font-weight: bold; color: #38bdf8; }
+        .card-desc { font-size: 0.9em; color: #94a3b8; line-height: 1.5; }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; margin-bottom: 20px; float: left; }
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="logo-container"><img src="logo.jpg" alt="شعار القافلة" onerror="this.style.display='none';"></div>
-        <h1>🛡️ لوحة التحكم الشاملة - مخزن القافلة</h1>
-        <p style="color: #94a3b8; font-weight: bold;">إدارة المخزون والطلبات والمشتريات وتوجيه الأيام</p>
+        <h1 style="color:#3b82f6; margin:0;">أسرة الأنبا ابرام</h1>
+        <p style="color:#94a3b8; margin-top:5px; font-weight:bold;">منظومة إدارة المخزن والمشتريات والطلبات 💙</p>
     </div>
 
+    <!-- شاشة تسجيل الدخول للقائمة الرئيسية -->
     <div id="login-screen">
-        <label style="color:#38bdf8; font-size:1.2em; margin-bottom:15px; font-weight: bold;">أدخل كلمة المرور:</label>
+        <label style="color:#38bdf8; font-size:1.2em; margin-bottom:15px; font-weight: bold;">🔐 أدخل كلمة المرور للدخول:</label>
         <input type="password" id="adminPass" placeholder="كلمة المرور..." onkeypress="if(event.key === 'Enter') checkPassword()">
-        <button id="loginBtn" onclick="checkPassword()" style="margin-top: 15px;" class="btn-primary">تسجيل الدخول</button>
+        <button id="loginBtn" onclick="checkPassword()" class="btn-primary">تسجيل الدخول</button>
         <div id="login-error">❌ كلمة المرور غير صحيحة</div>
     </div>
 
-    <div id="admin-content">
-        <div class="nav-bar">
-            <a href="preparatory.html" class="nav-link prep">📋 بوابة مسؤول اليوم التحضيري (التشيك ليست)</a>
-            <a href="day-officer.html" class="nav-link">📅 بوابة مسؤولين الأيام والمعرض والمسابقات</a>
-        </div>
+    <!-- القائمة الرئيسية تظهر بعد تسجيل الدخول -->
+    <div id="main-content">
+        <button onclick="logout()" class="logout-btn">🚪 قفل النظام</button>
+        <div style="clear:both;"></div>
 
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-            <button id="refreshBtn" class="btn-primary" onclick="refreshAll()">🔄 تحديث البيانات</button>
-            <button class="btn-delete" onclick="logout()">🚪 تسجيل خروج</button>
-        </div>
+        <div class="grid-menu">
+            <a href="servant.html" class="card-link" style="border-color:#10b981;">
+                <span class="card-icon">🛒</span>
+                <span class="card-title" style="color:#10b981;">1. بوابة الخدام</span>
+                <span class="card-desc">تقديم طلبات المنتجات وعربة تسوق الخدام</span>
+            </a>
 
-        <!-- ================= القسم الأول: إدارة المخزون ================= -->
-        <div class="section-header" onclick="toggleSection(this)">
-            <span>📦 أولاً: إدارة رصيد المخزون</span>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-body">
-            <div class="form-container">
-                <h3>🔄 تسجيل حركة (وارد / منصرف) سريعة</h3>
-                <div class="grid">
-                    <div>
-                        <label>🔍 اختر الصنف الموجود مسبقاً:</label>
-                        <select id="itemSelect"><option value="">⏳ جاري التحميل...</option></select>
-                    </div>
-                    <div>
-                        <label>🔢 الكمية المراد إضافتها أو صرفها:</label>
-                        <input type="number" id="amountInput" value="1" min="0.1" step="0.1">
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button onclick="updateInventoryQty('add')" class="btn-add" id="addBtn">📥 إضافة (وارد للمخزن)</button>
-                    <button onclick="updateInventoryQty('subtract')" class="btn-sub" id="subBtn">📤 سحب (منصرف من المخزن)</button>
-                </div>
-            </div>
+            <a href="inventory.html" class="card-link">
+                <span class="card-icon">📦</span>
+                <span class="card-title">2. إدارة رصيد المخزون</span>
+                <span class="card-desc">عرض كميات المخزن وتسجيل حركات وارد ومنصرف</span>
+            </a>
 
-            <div class="form-container">
-                <h3>➕ تعريف صنف جديد كلياً في المخزن</h3>
-                <div class="grid">
-                    <div>
-                        <label>القسم / الشيت:</label>
-                        <input type="text" id="newCategory" list="catDatalist" placeholder="اختر قسم موجود أو اكتب قسماً جديداً..." required>
-                        <datalist id="catDatalist"></datalist>
-                    </div>
-                    <div>
-                        <label>اسم الصنف الجديد:</label>
-                        <input type="text" id="newItemName" placeholder="اسم المنتج..." required>
-                    </div>
-                    <div>
-                        <label>الكمية الأولية المتوفرة:</label>
-                        <input type="number" id="newInitialQty" value="1" min="0" step="0.1">
-                    </div>
-                    <div>
-                        <label>الوحدة:</label>
-                        <select id="newUnit">
-                            <option value="قطعه">قطعه</option>
-                            <option value="كيلو">كيلو</option>
-                            <option value="لتر">لتر</option>
-                            <option value="كيس">كيس</option>
-                            <option value="علبة">علبة</option>
-                            <option value="لفة">لفة</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="addNewProduct()" class="btn-primary" id="newProdBtn" style="margin-top: 15px;">✨ حفظ الصنف في المخزن</button>
-            </div>
+            <a href="add-product.html" class="card-link">
+                <span class="card-icon">➕</span>
+                <span class="card-title">3. إضافة صنف جديد</span>
+                <span class="card-desc">تعريف أصناف ومنتجات جديدة كلياً في شيت المخزن</span>
+            </a>
 
-            <div class="form-container" style="background: transparent; border: none; padding: 0; box-shadow: none;">
-                <h3>🔍 جدول المخزون الحالي</h3>
-                <div class="filter-container">
-                    <div style="flex: 1;"><label>ابحث باسم الصنف:</label><input type="text" id="invSearchInput" placeholder="اكتب للبحث..." oninput="filterInventoryTable()"></div>
-                    <div style="flex: 1;"><label>تصفية بحسب القسم:</label><select id="invCategoryFilter" onchange="filterInventoryTable()"><option value="الكل">عرض كل الأقسام</option></select></div>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr><th>القسم</th><th>اسم الصنف</th><th>الكمية المُعرفة</th><th>الوحدة</th><th>المنصرف</th><th>المتبقي الحالي</th><th>إجراءات المخزن</th></tr>
-                        </thead>
-                        <tbody id="invTableBody"><tr><td colspan="7">⏳ جاري تحميل بيانات المخزن...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+            <a href="admin-requests.html" class="card-link">
+                <span class="card-icon">📋</span>
+                <span class="card-title">4. إدارة الطلبات والتوريد</span>
+                <span class="card-desc">متابعة طلبات الخدام وصرفها أو اعتماد الشراء</span>
+            </a>
 
-        <!-- ================= القسم الثاني: إدارة المشتريات والطلبات ================= -->
-        <div class="section-header" onclick="toggleSection(this)">
-            <span>🛒 ثانياً: إدارة المشتريات والطلبات</span>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-body">
-            <div class="form-container">
-                <h3>➕ تسجيل طلب جديد لسحب من المخزن أو شراء (للأدمن)</h3>
-                <form id="purchaseForm" onsubmit="submitAdminPurchase(event)">
-                    <div class="grid">
-                        <div>
-                            <label>المشتريات (اسم المنتج):</label>
-                            <input type="text" id="adminItem" list="itemDatalist" placeholder="اكتب اسم المنتج..." required oninput="autoFillItemDetails()">
-                            <datalist id="itemDatalist"></datalist>
-                        </div>
-                        <div>
-                            <label>القسم (سيُملأ تلقائياً):</label>
-                            <select id="adminCat" required>
-                                <option value="" disabled selected>⏳ جاري التحميل...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>📅 اليوم / الجهة المطلوب لها المنتج:</label>
-                            <select id="adminTargetDay" required>
-                                <option value="اليوم الأول">اليوم الأول (مسؤولين الأيام)</option>
-                                <option value="اليوم الثاني">اليوم الثاني (مسؤولين الأيام)</option>
-                                <option value="اليوم الثالث">اليوم الثالث (مسؤولين الأيام)</option>
-                                <option value="اليوم الرابع">اليوم الرابع (مسؤولين الأيام)</option>
-                                <option value="مسؤول المعرض">مسؤول المعرض</option>
-                                <option value="مسؤول مسابقات الأهالي">مسؤول مسابقات الأهالي</option>
-                                <option value="عام">عام / أخرى</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>الكمية المطلوبة:</label>
-                            <input type="number" id="adminQty" min="0.1" step="0.1" required>
-                        </div>
-                        <div>
-                            <label>الوحدة (ستُملأ تلقائياً):</label>
-                            <select id="adminUnit" required>
-                                <option value="" disabled selected>اختر الوحدة...</option>
-                                <option value="قطعه">قطعه</option>
-                                <option value="كيلو">كيلو</option>
-                                <option value="لتر">لتر</option>
-                                <option value="كيس">كيس</option>
-                                <option value="علبة">علبة</option>
-                                <option value="لفة">لفة</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>اسم الطالب (الخادم/المسؤول):</label>
-                            <input type="text" id="adminRequester" placeholder="اسم الخادم..." required>
-                        </div>
-                        <div>
-                            <label>رقم التواصل:</label>
-                            <input type="tel" id="adminContact" placeholder="رقم الموبايل..." required>
-                        </div>
-                        <div>
-                            <label>تاريخ الطلب:</label>
-                            <input type="date" id="adminDate" required>
-                        </div>
-                        <div>
-                            <label>صورة المنتج (اختياري):</label>
-                            <input type="file" id="adminImage" accept="image/*">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-primary" id="adminSubmitBtn" style="margin-top: 15px;">إرسال ومعالجة الطلب</button>
-                </form>
-            </div>
+            <a href="history.html" class="card-link">
+                <span class="card-icon">🗂️</span>
+                <span class="card-title">5. سجل الطلبات الأرشيفي</span>
+                <span class="card-desc">الأرشيف التاريخي الكامل للطلبات السابقة وحالاتها</span>
+            </a>
 
-            <div class="form-container" style="background: transparent; border: none; padding: 0; box-shadow: none;">
-                <h3>📋 سجل طلبات الخدام ونواقص المشتريات</h3>
-                <div class="filter-container">
-                    <div style="flex: 1; min-width: 200px;">
-                        <label>🔍 عرض الطلبات لقسم:</label>
-                        <select id="filterCategory" onchange="renderPurchaseTable()"><option value="الكل">عرض كل الأقسام</option></select>
-                    </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <label>📅 تصفية حسب اليوم / الجهة:</label>
-                        <select id="filterTargetDay" onchange="renderPurchaseTable()">
-                            <option value="الكل">كل الأيام والجهات</option>
-                            <option value="اليوم الأول">اليوم الأول</option>
-                            <option value="اليوم الثاني">اليوم الثاني</option>
-                            <option value="اليوم الثالث">اليوم الثالث</option>
-                            <option value="اليوم الرابع">اليوم الرابع</option>
-                            <option value="مسؤول المعرض">مسؤول المعرض</option>
-                            <option value="مسؤول مسابقات الأهالي">مسؤول مسابقات الأهالي</option>
-                            <option value="عام">عام</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr><th>اليوم / الجهة</th><th>القسم</th><th>الطالب</th><th>رقم الطالب 📞</th><th>المنتج</th><th>الكمية المطلوبة</th><th>الموجود بالمخزن 📦</th><th>صُرف من المخزن</th><th>مطلوب شراؤه 🛒</th><th>التاريخ</th><th>الصورة</th><th>الحالة</th><th>إجراءات التوريد</th></tr>
-                        </thead>
-                        <tbody id="purchaseTableBody"><tr><td colspan="13">⏳ جاري تحميل البيانات...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+            <a href="reports.html" class="card-link" style="border-color:#f59e0b;">
+                <span class="card-icon">📊</span>
+                <span class="card-title" style="color:#f59e0b;">6. التقارير والإحصائيات</span>
+                <span class="card-desc">مؤشرات الرصيد، النواقص، وتلخيص الحركة الإدارية</span>
+            </a>
 
-        <!-- ================= القسم الثالث: سجل الطلبات (History) ================= -->
-        <div class="section-header" onclick="toggleSection(this)">
-            <span>🗂️ ثالثاً: سجل الطلبات الكامل</span>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-body">
-            <div class="filter-container">
-                <div style="flex: 2; min-width: 200px;"><label>ابحث (الطالب / المنتج / اليوم / الرقم):</label><input type="text" id="histSearch" placeholder="اكتب للبحث..." oninput="renderHistory()"></div>
-                <div style="flex: 1; min-width: 160px;"><label>القسم:</label><select id="histCategory" onchange="renderHistory()"><option value="الكل">كل الأقسام</option></select></div>
-            </div>
-            <div id="histSummary" style="margin: 0 0 12px; color: #94a3b8; font-weight: 600;"></div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr><th>التاريخ</th><th>اليوم / الجهة</th><th>الطالب</th><th>رقم التواصل</th><th>القسم</th><th>المنتج</th><th>الوحدة</th><th>الكمية المطلوبة</th><th>الموجود بالمخزن (المصروف)</th><th>المطلوب شراؤه</th><th>الكمية التي تم شراؤها</th><th>الحالة</th><th>الصورة</th></tr>
-                    </thead>
-                    <tbody id="historyTableBody"><tr><td colspan="13">⏳ جاري تحميل السجل...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
+            <a href="preparatory.html" class="card-link" style="border-color:#34d399;">
+                <span class="card-icon">✅</span>
+                <span class="card-title" style="color:#34d399;">7. بوابة اليوم التحضيري</span>
+                <span class="card-desc">تشيك ليست استلام الأصناف الجاهزة وتسليمها لمسؤولين الأيام</span>
+            </a>
 
+            <a href="day-officer.html" class="card-link" style="border-color:#a855f7;">
+                <span class="card-icon">📅</span>
+                <span class="card-title" style="color:#c084fc;">8. مسؤولين الأيام والأقسام</span>
+                <span class="card-desc">تسجيل احتياجات الأيام، المعرض، ومسابقات الأهالي ومتابعتها</span>
+            </a>
+        </div>
     </div>
 
     <script>
-        function toggleSection(headerEl) {
-            headerEl.classList.toggle('collapsed');
-            const body = headerEl.nextElementSibling;
-            if (body && body.classList.contains('section-body')) {
-                body.classList.toggle('collapsed');
-            }
-        }
-
         const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec'; 
-        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec'; 
-        const historyURL = 'https://script.google.com/macros/s/AKfycbxEadAjxysbvSYkCicB1AfmKP--JBPoNNHIwhE605rXk2o-z1pQxEi6PPdAhvWHkV9OSA/exec';
-        
-        let purchaseDataGlobal = []; 
-        let inventoryDataGlobal = [];
-        let activeToken = '';
-        let historyDataGlobal = [], historyLoaded = false, historyError = '';
-        const histSource = () => historyURL ? historyDataGlobal : purchaseDataGlobal;
-
-        // استخراج اليوم/الجهة سواء من عمود targetDay أو من وسم [اليوم] في اسم الطالب
-        function parseDayAndRequester(row) {
-            const rawName = String(row.requesterName || 'غير مسجل');
-            if (row.targetDay && String(row.targetDay).trim()) {
-                return { day: String(row.targetDay).trim(), cleanName: rawName.replace(/^\[.*?\]\s*/, '') };
-            }
-            const m = rawName.match(/^\[(.*?)\]\s*(.*)$/);
-            if (m) {
-                return { day: m[1].trim(), cleanName: m[2].trim() || 'غير مسجل' };
-            }
-            return { day: 'عام', cleanName: rawName };
-        }
-
-        async function fetchPurchases() {
-            const r = await fetch(purchaseURL + "?pass=" + encodeURIComponent(activeToken));
-            const d = await r.json();
-            return Array.isArray(d) ? d : [];
-        }
-        async function syncHistory(rows) {
-            if (!historyURL) return;
-            try {
-                const list = (rows || purchaseDataGlobal).slice().sort((a, b) => (a.row || 0) - (b.row || 0));
-                if (!list.length) return;
-                await fetch(historyURL, { method: 'POST', body: JSON.stringify({ action: 'sync', pass: activeToken, rows: list }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-            } catch (e) { console.warn('history sync failed', e); }
-        }
-        async function loadHistory() {
-            if (!historyURL) return;
-            try {
-                const txt = await (await fetch(historyURL + '?action=getHistory&pass=' + encodeURIComponent(activeToken))).text();
-                let d; try { d = JSON.parse(txt); } catch (e) { throw new Error('الرابط لا يعيد بيانات صحيحة'); }
-                if (!Array.isArray(d)) throw new Error((d && d.error) || 'رد غير متوقع من سكريبت السجل');
-                historyDataGlobal = d.reverse(); historyLoaded = true; historyError = '';
-            } catch (e) {
-                historyLoaded = false; historyError = e.message || String(e);
-            }
-            renderHistory();
-        }
-        async function refreshAll() {
-            const b = document.getElementById('refreshBtn');
-            b.disabled = true; b.innerText = '⏳ جاري التحديث...';
-            try { await reloadPurchaseData(); await loadInventoryData(); }
-            finally { b.disabled = false; b.innerText = '🔄 تحديث البيانات'; }
-        }
-        function logout() {
-            try { sessionStorage.removeItem('adminPass'); } catch (e) {}
-            location.reload();
-        }
-
-        async function inventoryPost(obj) {
-            const r = await fetch(inventoryURL, { method: 'POST', body: JSON.stringify(obj), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-            return r.json();
-        }
-
-        const normAr = t => String(t || '').trim().toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه');
-        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-        function renderHistory() {
-            const tbody = document.getElementById('historyTableBody');
-            if (historyURL && !historyLoaded) { tbody.innerHTML = historyError ? `<tr><td colspan="13" style="color:#ef4444;">⚠️ تعذر تحميل السجل: ${escH(historyError)}</td></tr>` : '<tr><td colspan="13">⏳ جاري تحميل السجل...</td></tr>'; document.getElementById('histSummary').textContent = ''; return; }
-            const sel = document.getElementById('histCategory');
-            const q = document.getElementById('histSearch').value.trim().toLowerCase();
-
-            const cur = sel.value;
-            const cats = [...new Set(histSource().map(r => r.category).filter(Boolean))];
-            sel.innerHTML = '<option value="الكل">كل الأقسام</option>' + cats.map(c => `<option value="${escH(c)}">${escH(c)}</option>`).join('');
-            sel.value = cats.includes(cur) ? cur : 'الكل';
-
-            const list = histSource().filter(r => {
-                const { day, cleanName } = parseDayAndRequester(r);
-                return (sel.value === 'الكل' || r.category === sel.value) &&
-                    (!q || `${cleanName} ${day} ${r.item} ${r.contactNumber}`.toLowerCase().includes(q));
-            });
-
-            let bought = 0, waiting = 0, rejected = 0, pending = 0;
-            list.forEach(r => { if (r.status === 'REJECTED') rejected++; else if (r.status === 'PENDING_APPROVAL') pending++; else if (r.status === 'PO_CONFIRMED') bought++; else if ((parseFloat(r.purchase_qty_needed) || 0) > 0) waiting++; });
-            document.getElementById('histSummary').textContent = `عدد الطلبات: ${list.length} — تم شراؤها: ${bought} — بانتظار الشراء: ${waiting} — مرفوضة: ${rejected} — بانتظار التأكيد: ${pending}`;
-
-            if (!list.length) { tbody.innerHTML = '<tr><td colspan="13">لا توجد طلبات في السجل.</td></tr>'; return; }
-            tbody.innerHTML = list.map(r => {
-                const { day, cleanName } = parseDayAndRequester(r);
-                const needed = parseFloat(r.purchase_qty_needed) || 0;
-                const done = r.status === 'PO_CONFIRMED';
-                const boughtQty = done ? needed : 0;
-                let st = '<span class="status-fulfilled">تم التوريد من المخزن ✅</span>';
-                if (r.status === 'PENDING_APPROVAL') st = '<span class="status-partial">بانتظار التأكيد ⏳</span>';
-                else if (r.status === 'REJECTED') st = '<span style="color:#ef4444; font-weight:bold;">مرفوضة ❌</span>';
-                else if (done) st = '<span class="status-fulfilled">تم الشراء والتوريد ✅</span>';
-                else if (needed > 0) st = '<span class="status-partial">بانتظار الشراء ⏳</span>';
-                const img = (r.image && String(r.image).startsWith('http')) ? `<a href="${escH(r.image)}" target="_blank" class="link-img">عرض 🖼️</a>` : '-';
-                return `<tr>
-                    <td>${escH(r.date)}</td>
-                    <td><span class="day-badge">${escH(day)}</span></td>
-                    <td style="color:#38bdf8; font-weight:bold;">${escH(cleanName)}</td>
-                    <td>${escH(r.contactNumber)}</td>
-                    <td><span class="cat-badge">${escH(r.category)}</span></td>
-                    <td style="font-weight:bold;">${escH(r.item)}</td>
-                    <td>${escH(r.unit)}</td>
-                    <td>${escH(r.requested_qty)}</td>
-                    <td>${escH(r.fulfilled_from_stock)}</td>
-                    <td style="color:${needed > 0 ? '#f59e0b' : '#f8fafc'}; font-weight:bold;">${needed}</td>
-                    <td style="color:#10b981; font-weight:bold;">${boughtQty}</td>
-                    <td>${st}</td>
-                    <td>${img}</td></tr>`;
-            }).join('');
-        }
-
-        function errMsg(r) { return r && (r.error || (r.status === 'error' ? (r.message || 'خطأ في السيرفر') : '')); }
-
-        document.getElementById('adminDate').valueAsDate = new Date();
 
         async function checkPassword() {
             const passInput = document.getElementById('adminPass').value;
@@ -427,16 +120,9 @@
                     errorMsg.innerText = "❌ " + data.error;
                     errorMsg.style.display = 'block';
                 } else {
-                    activeToken = passInput;
                     try { sessionStorage.setItem('adminPass', passInput); } catch (e) {}
                     document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('admin-content').style.display = 'block';
-                    
-                    purchaseDataGlobal = Array.isArray(data) ? data.reverse() : [];
-                    renderPurchaseTable(); 
-                    
-                    await loadInventoryData();
-                    syncHistory().then(loadHistory);
+                    document.getElementById('main-content').style.display = 'block';
                 }
             } catch (error) {
                 errorMsg.innerText = '⚠️ حدث خطأ في الاتصال بالسيرفر.';
@@ -447,342 +133,19 @@
             }
         }
 
-        async function loadInventoryData() {
-            try {
-                const res = await fetch(inventoryURL);
-                inventoryDataGlobal = await res.json();
-
-                const invCategoryFilter = document.getElementById('invCategoryFilter');
-                const filterCategory = document.getElementById('filterCategory');
-                const adminCat = document.getElementById('adminCat');
-                const itemSelect = document.getElementById('itemSelect'); 
-                const catDatalist = document.getElementById('catDatalist');
-                const itemDatalist = document.getElementById('itemDatalist'); 
-                
-                invCategoryFilter.innerHTML = '<option value="الكل">عرض كل الأقسام</option>';
-                filterCategory.innerHTML = '<option value="الكل">عرض كل الأقسام</option>';
-                adminCat.innerHTML = '<option value="" disabled selected>-- اختر القسم --</option>';
-                itemSelect.innerHTML = '<option value="" disabled selected>-- اختر الصنف --</option>';
-                catDatalist.innerHTML = '';
-                itemDatalist.innerHTML = '';
-                
-                const categories = new Set();
-                const groupedData = {};
-
-                inventoryDataGlobal.forEach(item => {
-                    if (item.sheet) {
-                        categories.add(item.sheet);
-                        groupedData[item.sheet] = groupedData[item.sheet] || [];
-                        groupedData[item.sheet].push(item);
-                        itemDatalist.innerHTML += `<option value="${item.item}">`;
-                    }
-                });
-
-                categories.forEach(cat => {
-                    invCategoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`;
-                    filterCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
-                    adminCat.innerHTML += `<option value="${cat}">${cat}</option>`;
-                    catDatalist.innerHTML += `<option value="${cat}">`; 
-                });
-
-                for (let sheetName in groupedData) {
-                    let optGroup = document.createElement('optgroup');
-                    optGroup.label = `📂 قسم: ${sheetName}`;
-                    groupedData[sheetName].forEach(item => {
-                        let option = document.createElement('option');
-                        option.value = `${item.sheet}|${item.item}`;
-                        option.textContent = `${item.item} (${item.unit})`;
-                        optGroup.appendChild(option);
-                    });
-                    itemSelect.appendChild(optGroup);
-                }
-
-                filterInventoryTable();
-                renderPurchaseTable();
-            } catch (e) {
-                console.error(e);
-            }
+        function logout() {
+            try { sessionStorage.removeItem('adminPass'); } catch (e) {}
+            location.reload();
         }
 
-        function autoFillItemDetails() {
-            const typedItem = document.getElementById('adminItem').value.trim().toLowerCase();
-            const catSelect = document.getElementById('adminCat');
-            const unitSelect = document.getElementById('adminUnit');
-            const foundItem = inventoryDataGlobal.find(i => i.item && i.item.toLowerCase() === typedItem);
-            if (foundItem) {
-                catSelect.value = foundItem.sheet;
-                unitSelect.value = foundItem.unit;
-            }
-        }
-
-        function filterInventoryTable() {
-            const tbody = document.getElementById('invTableBody');
-            const searchText = document.getElementById('invSearchInput').value.trim().toLowerCase();
-            const catFilter = document.getElementById('invCategoryFilter').value;
-
-            tbody.innerHTML = '';
-            let filtered = inventoryDataGlobal.filter(item => {
-                const matchesSearch = item.item ? item.item.toLowerCase().includes(searchText) : false;
-                const matchesCat = (catFilter === 'الكل' || item.sheet === catFilter);
-                return matchesSearch && matchesCat;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7">لا توجد أصناف تطابق البحث.</td></tr>';
-                return;
-            }
-
-            filtered.forEach(item => {
-                let isWarning = item.remaining <= 0 ? 'color: #ef4444; font-weight: bold;' : 'color: #10b981; font-weight: bold;';
-                let cleanSheet = item.sheet.replace(/'/g, "\\'");
-                let cleanItem = item.item.replace(/'/g, "\\'");
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td><span class="cat-badge">${item.sheet}</span></td>
-                        <td style="font-weight: 700; color: #f8fafc;">${item.item}</td>
-                        <td>${item.quantity}</td>
-                        <td>${item.unit}</td>
-                        <td style="color: #ef4444;">${item.issued}</td>
-                        <td style="font-size: 1.15em; ${isWarning}">${item.remaining}</td>
-                        <td><button class="btn-delete" onclick="deleteProduct('${cleanSheet}', '${cleanItem}', this)">مسح 🗑️</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        async function updateInventoryQty(action) {
-            const selectVal = document.getElementById('itemSelect').value;
-            if (!selectVal) return alert("يرجى اختيار الصنف أولاً!");
-            const [sheet, item] = selectVal.split('|');
-            let amount = parseFloat(document.getElementById('amountInput').value) || 0;
-            if (amount <= 0) return alert("يرجى إدخال كمية صحيحة!");
-
-            document.getElementById('addBtn').disabled = true;
-            document.getElementById('subBtn').disabled = true;
-
-            try {
-                const result = await inventoryPost({ sheet, item, amount, action, pass: activeToken });
-                if(errMsg(result)) alert("⚠️ " + errMsg(result));
-                else {
-                    document.getElementById('amountInput').value = 1;
-                    await loadInventoryData();
-                    alert(`✅ تمت العملية بنجاح لصنف: ${item}`);
-                }
-            } catch (error) { alert("⚠️ حدث خطأ!"); } 
-            finally { document.getElementById('addBtn').disabled = false; document.getElementById('subBtn').disabled = false; }
-        }
-
-        async function addNewProduct() {
-            const category = document.getElementById('newCategory').value.trim();
-            const itemName = document.getElementById('newItemName').value.trim();
-            const qty = document.getElementById('newInitialQty').value;
-            const unit = document.getElementById('newUnit').value;
-
-            if (!category || !itemName) return alert("يرجى إدخال القسم واسم الصنف!");
-
-            const btn = document.getElementById('newProdBtn');
-            btn.disabled = true; btn.innerText = "⏳ جاري الإضافة...";
-
-            try {
-                const result = await inventoryPost({ action: 'addNewItem', sheet: category, item: itemName, quantity: qty, unit: unit, pass: activeToken });
-                if (errMsg(result)) alert("⚠️ " + errMsg(result));
-                else {
-                    alert(`✅ تم إضافة المنتج "${itemName}" للمخزن!`);
-                    document.getElementById('newCategory').value = ''; document.getElementById('newItemName').value = '';
-                    document.getElementById('newInitialQty').value = 1;
-                    await loadInventoryData();
-                }
-            } catch (error) { alert("⚠️ حدث خطأ!"); } 
-            finally { btn.disabled = false; btn.innerText = "✨ حفظ الصنف في المخزن"; }
-        }
-
-        async function deleteProduct(sheet, item, btn) {
-            if (!confirm(`⚠️ تأكيد: هل تريد مسح الصنف "${item}" من المخزن؟`)) return;
-            let originalText = btn.innerText; btn.innerText = "⏳"; btn.disabled = true;
-
-            try {
-                const result = await inventoryPost({ action: 'deleteProduct', sheet, item, pass: activeToken });
-                if (errMsg(result)) alert("⚠️ " + errMsg(result));
-                else { alert(`✅ تم مسح "${item}" من المخزن.`); await loadInventoryData(); }
-            } catch (error) { alert("⚠️ حدث خطأ!"); } 
-            finally { btn.innerText = originalText; btn.disabled = false; }
-        }
-
-        function renderPurchaseTable() {
-            renderHistory();
-            const tbody = document.getElementById('purchaseTableBody');
-            const filterValue = document.getElementById('filterCategory').value;
-            const dayFilter = document.getElementById('filterTargetDay').value;
-            tbody.innerHTML = '';
-
-            let filteredData = purchaseDataGlobal.filter(row => {
-                const { day } = parseDayAndRequester(row);
-                const matchCat = (filterValue === 'الكل' || row.category === filterValue);
-                const matchDay = (dayFilter === 'الكل' || day === dayFilter);
-                return matchCat && matchDay;
-            });
-
-            if (!filteredData || filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13">لا توجد طلبات مسجلة.</td></tr>'; return;
-            }
-            filteredData.forEach(row => {
-                const { day, cleanName } = parseDayAndRequester(row);
-                let statusClass = '', statusText = '';
-                let cat = row.category || 'غير محدد', item = row.item || 'غير محدد';
-                let reqQty = row.requested_qty || 0, unit = row.unit || '', fulfilled = row.fulfilled_from_stock || 0;
-                let needed = row.purchase_qty_needed || 0;
-                let dateDisplay = (row.date && row.date !== "1969-12-31" && row.date !== "undefined") ? row.date : "غير محدد";
-
-                const isPending = row.status === 'PENDING_APPROVAL';
-                const isDone = row.status === 'PO_CONFIRMED';
-                const stockItem = inventoryDataGlobal.find(i => i.sheet === row.category && normAr(i.item) === normAr(row.item)) || inventoryDataGlobal.find(i => normAr(i.item) === normAr(row.item));
-                
-                let rem = 0;
-                let stockHtml = inventoryDataGlobal.length ? '<span style="color:#94a3b8">غير موجود</span>' : '⏳';
-                
-                if (stockItem) {
-                    rem = parseFloat(stockItem.remaining) || 0;
-                    const color = rem <= 0 ? '#ef4444' : (isPending && rem < (parseFloat(reqQty) || 0) ? '#f59e0b' : '#10b981');
-                    stockHtml = `<span style="color:${color}; font-weight:bold;">${escH(rem)} ${escH(stockItem.unit || unit)}</span>`;
-                }
-
-                if (isPending) { statusClass = 'status-partial'; statusText = needed > 0 ? 'بانتظار التأكيد ⏳' : 'بانتظار التوريد من المخزن ⏳'; }
-                else if (isDone) { statusClass = 'status-fulfilled'; statusText = 'تم الشراء والتوريد ✅'; }
-                else if (needed > 0) { statusClass = 'status-partial'; statusText = 'صُرف المتاح + مطلوب شراء'; }
-                else { statusClass = 'status-fulfilled'; statusText = 'تم التوريد من المخزن ✅'; }
-
-                const prop = isPending ? ' <small style="color:#94a3b8">(مقترح)</small>' : '';
-                let supplyBtn = '', rejectBtn = '';
-                
-                if (isPending) {
-                    if (rem > 0) supplyBtn = `<button class="btn-confirm" style="background:#3b82f6;" onclick="approveRequest(${row.row}, this)">📦 سحب من المخزن</button>`;
-                    else supplyBtn = `<button class="btn-confirm" onclick="approveRequest(${row.row}, this)">🛒 شراء (اعتماد كطلب)</button>`;
-                    rejectBtn = `<button class="btn-delete" onclick="deletePurchaseRecord(${row.row}, this)">❌ إلغاء العملية</button>`;
-                } else if (needed > 0 && !isDone) {
-                    supplyBtn = `<button class="btn-confirm" onclick="confirmPurchaseOrder(${row.row}, this)">✅ تأكيد الشراء</button>`;
-                }
-
-                const actionHtml = (supplyBtn || rejectBtn) ? `<div style="display:flex; flex-direction:column; gap:6px; min-width:150px;">${supplyBtn}${rejectBtn}</div>` : '-';
-                const imgCell = (row.image && String(row.image).startsWith('http')) ? `<a href="${escH(row.image)}" target="_blank" class="link-img">عرض 🖼️</a>` : '-';
-
-                tbody.innerHTML += `<tr>
-                    <td><span class="day-badge">${escH(day)}</span></td>
-                    <td><span class="cat-badge">${cat}</span></td>
-                    <td style="color:#38bdf8; font-weight:bold;">${escH(cleanName)}</td>
-                    <td>${row.contactNumber ? `<a href="tel:${escH(row.contactNumber)}" style="color:#f8fafc; text-decoration:none;">${escH(row.contactNumber)}</a>` : '-'}</td>
-                    <td style="font-weight:bold;">${item}</td>
-                    <td>${reqQty} ${unit}</td>
-                    <td>${stockHtml}</td>
-                    <td>${fulfilled} ${unit}${prop}</td>
-                    <td style="font-weight: bold; color: ${needed > 0 ? '#ef4444' : '#f8fafc'};">${needed > 0 ? needed + ' ' + unit : '0'}${prop}</td>
-                    <td>${dateDisplay}</td>
-                    <td>${imgCell}</td>
-                    <td class="${statusClass}">${statusText}</td>
-                    <td>${actionHtml}</td>
-                </tr>`;
-            });
-        }
-
-        async function reloadPurchaseData() {
-            try {
-                const res = await fetch(purchaseURL + "?pass=" + encodeURIComponent(activeToken));
-                const data = await res.json();
-                purchaseDataGlobal = Array.isArray(data) ? data.reverse() : [];
-                renderPurchaseTable();
-                syncHistory().then(loadHistory);
-            } catch (error) { console.error(error); }
-        }
-
-        function getBase64(file) { 
-            return new Promise((resolve, reject) => { 
-                if(!file) resolve(null);
-                const reader = new FileReader(); 
-                reader.readAsDataURL(file); 
-                reader.onload = () => resolve(reader.result.split(',')[1]); 
-                reader.onerror = error => reject(error); 
-            }); 
-        }
-
-        async function submitAdminPurchase(e) {
-            e.preventDefault();
-            const btn = document.getElementById('adminSubmitBtn');
-            btn.disabled = true; btn.innerText = "⏳ جاري المعالجة...";
-
-            try {
-                let file = document.getElementById('adminImage').files[0];
-                const targetDay = document.getElementById('adminTargetDay').value;
-                const rawRequester = document.getElementById('adminRequester').value.trim();
-
-                let payload = {
-                    action: 'add', pass: activeToken, category: document.getElementById('adminCat').value,
-                    targetDay: targetDay,
-                    requesterName: `[${targetDay}] ${rawRequester}`,
-                    contactNumber: document.getElementById('adminContact').value,
-                    item: document.getElementById('adminItem').value, qty: document.getElementById('adminQty').value,
-                    unit: document.getElementById('adminUnit').value, date: document.getElementById('adminDate').value,
-                    imageBase64: file ? await getBase64(file) : null, mimeType: file ? file.type : null, imageName: file ? file.name : null
-                };
-
-                const res = await fetch(purchaseURL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-                const result = await res.json();
-
-                if (errMsg(result)) { alert("⚠️ " + errMsg(result)); return; }
-
-                alert(`✅ تم تسجيل الطلب لـ (${targetDay}) وهو بانتظار التأكيد.`);
-                document.getElementById('purchaseForm').reset();
-                document.getElementById('adminDate').valueAsDate = new Date(); 
-                await reloadPurchaseData(); await loadInventoryData();
-            } catch (error) { alert("⚠️ حدث خطأ: " + error.message); } 
-            finally { btn.disabled = false; btn.innerText = "إرسال ومعالجة الطلب"; }
-        }
-
-        async function confirmPurchaseOrder(rowNum, btn) {
-            if(!confirm('📦 تأكيد: هل تم الشراء؟')) return;
-            let originalText = btn.innerText; btn.innerText = '⏳'; btn.disabled = true;
-            try {
-                const r = await (await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({ action: 'confirmAndAdd', row: rowNum, pass: activeToken }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })).json();
-                if (errMsg(r)) { alert('⚠️ ' + errMsg(r)); btn.innerText = originalText; btn.disabled = false; return; }
-                alert('✅ تم التأكيد وسيظهر الصنف الآن لدى مسؤول اليوم التحضيري!'); await reloadPurchaseData(); await loadInventoryData();
-            } catch (e) { alert('⚠️ حدث خطأ!'); btn.innerText = originalText; btn.disabled = false; }
-        }
-
-        async function approveRequest(rowNum, btn) {
-            if (!confirm('سيتم تطبيق خصم الكميات أو اعتماد الطلب للشراء الآن، هل أنت متأكد؟')) return;
-            let originalText = btn.innerText; btn.innerText = '⏳'; btn.disabled = true;
-            const rejBtns = [...btn.parentElement.querySelectorAll('.btn-delete')]; rejBtns.forEach(b => b.style.display = 'none');
-            try {
-                const r = await (await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({ action: 'approve', row: rowNum, pass: activeToken }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })).json();
-                if (errMsg(r)) { alert('⚠️ ' + errMsg(r)); btn.innerText = originalText; btn.disabled = false; rejBtns.forEach(b => b.style.display = ''); return; }
-                
-                if (r.fulfilled > 0 && r.needed > 0) alert(`✅ تم توريد ${r.fulfilled} من المخزن (جاهز لليوم التحضيري)، والمتبقي (${r.needed}) مطلوب للشراء.`);
-                else if (r.fulfilled > 0) alert(`✅ تم توريد كامل الكمية (${r.fulfilled}) من المخزن وجاهزة لليوم التحضيري.`);
-                else alert(`✅ تم اعتماد الطلب كلياً للشراء (المطلوب: ${r.needed}).`);
-
-                await reloadPurchaseData(); await loadInventoryData();
-            } catch (e) { alert('⚠️ حدث خطأ!'); btn.innerText = originalText; btn.disabled = false; rejBtns.forEach(b => b.style.display = ''); }
-        }
-
-        async function deletePurchaseRecord(rowNum, btn) {
-            if(!confirm('⚠️ هل أنت متأكد من إلغاء العملية/الطلب؟')) return;
-            let originalText = btn.innerText; btn.innerText = '⏳'; btn.disabled = true;
-            try {
-                if (historyURL) {
-                    try {
-                        const fresh = await fetchPurchases();
-                        const target = fresh.find(r => r.row === rowNum);
-                        if (target && target.status !== 'PO_CONFIRMED') target.status = 'REJECTED';
-                        await syncHistory(fresh);
-                    } catch (e) {}
-                }
-                const rj = await (await fetch(purchaseURL, { method: 'POST', body: JSON.stringify({ action: 'reject', row: rowNum, pass: activeToken }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })).json();
-                if (errMsg(rj)) { alert('⚠️ ' + errMsg(rj)); btn.innerText = originalText; btn.disabled = false; await reloadPurchaseData(); return; }
-                alert('✅ تم إلغاء العملية.'); await reloadPurchaseData(); await loadInventoryData();
-            } catch (e) { alert('⚠️ حدث خطأ.'); btn.innerText = originalText; btn.disabled = false; }
-        }
-    
         (async () => {
-            try { const p = sessionStorage.getItem('adminPass'); if (p) { document.getElementById('adminPass').value = p; await checkPassword(); } } catch (e) {}
+            try { 
+                const p = sessionStorage.getItem('adminPass'); 
+                if (p) { 
+                    document.getElementById('adminPass').value = p; 
+                    await checkPassword(); 
+                } 
+            } catch (e) {}
         })();
     </script>
 </body>
