@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kafela-pwa-v1';
+const CACHE_NAME = 'kafela-pwa-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -10,9 +10,7 @@ const ASSETS = [
   './reports.html',
   './preparatory.html',
   './day-officer.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -40,7 +38,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // استراتيجية Network-First للصفحات مع الرجوع للكاش عند انقطاع الشبكة
+  // استراتيجية Network-First للصفحات مع الرجوع للكاش عند انقطاع الشبدة
   event.respondWith(
     fetch(event.request)
       .then((res) => {
