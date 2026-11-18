@@ -15,11 +15,13 @@
             --primary: #a855f7;
             --blue: #3b82f6;
             --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
             --text: #f8fafc;
             --muted: #94a3b8;
         }
         * { box-sizing: border-box; }
-        body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); padding: 16px; max-width: 1050px; margin: auto; }
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); padding: 16px; max-width: 1150px; margin: auto; }
         
         .top-nav { display: flex; gap: 8px; background: var(--card); padding: 10px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
         .nav-btn { color: var(--text); text-decoration: none; padding: 7px 12px; border-radius: 10px; font-weight: 700; background: var(--bg); border: 1px solid var(--border); font-size: 0.86em; }
@@ -42,8 +44,8 @@
 
         .smart-hint { margin-top: 8px; padding: 10px 14px; border-radius: 10px; font-size: 0.9em; font-weight: 700; background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
         .smart-hint.ok { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.08); }
-        .smart-hint.warn { border-color: #f59e0b; color: #fbbf24; background: rgba(245, 158, 11, 0.08); }
-        .smart-hint.err { border-color: #ef4444; color: #f87171; background: rgba(239, 68, 68, 0.08); }
+        .smart-hint.warn { border-color: var(--amber); color: #fbbf24; background: rgba(245, 158, 11, 0.08); }
+        .smart-hint.err { border-color: var(--red); color: #f87171; background: rgba(239, 68, 68, 0.08); }
 
         .btn-mini { padding: 7px 13px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg); color: #38bdf8; font-family: inherit; font-size: 0.86em; font-weight: 700; cursor: pointer; }
         .btn-mini:hover:not(:disabled) { border-color: #38bdf8; }
@@ -57,10 +59,60 @@
         .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .table-container { overflow-x: auto; border-radius: 11px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; background: var(--bg); font-size: 0.92em; }
-        th, td { padding: 11px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; background: var(--bg); font-size: 0.9em; }
+        th, td { padding: 11px 9px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
         th { background: var(--card); color: #c084fc; }
+        tbody tr:hover { background: rgba(51, 65, 85, 0.35); }
         .sync-badge { font-size: 0.82em; color: var(--muted); font-weight: 600; }
+
+        /* قسم المتابعة والهيستوري */
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .kpi-box { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
+        .kpi-val { font-size: 1.5em; font-weight: 700; color: #38bdf8; line-height: 1.2; }
+        .kpi-val.green { color: #10b981; }
+        .kpi-val.blue { color: #60a5fa; }
+        .kpi-val.amber { color: #f59e0b; }
+        .kpi-val.red { color: #ef4444; }
+        .kpi-lbl { font-size: 0.8em; color: var(--muted); font-weight: 600; margin-top: 4px; }
+
+        .status-tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+        .st-tab { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: #cbd5e1; font-family: inherit; font-size: 0.84em; font-weight: 700; cursor: pointer; transition: 0.15s; }
+        .st-tab.active { background: var(--primary); color: #fff; border-color: #c084fc; }
+
+        .history-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-bottom: 14px; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.83em; font-weight: 700; display: inline-block; }
+        .b-supplied { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .b-partial { background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+        .b-pending { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .b-cancel { background: rgba(239, 68, 68, 0.16); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .cat-pill { background: var(--card); border: 1px solid var(--border); color: #cbd5e1; padding: 3px 8px; border-radius: 7px; font-size: 0.83em; }
+
+        /* شارات استلام وتسليم مسؤول اليوم التحضيري */
+        .prep-stack { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .prep-step { padding: 3px 8px; border-radius: 7px; font-size: 0.8em; font-weight: 700; border: 1px solid var(--border); background: var(--card); color: var(--muted); }
+        .prep-step.recv-ok { background: rgba(59, 130, 246, 0.18); color: #93c5fd; border-color: rgba(59, 130, 246, 0.45); }
+        .prep-step.deliv-ok { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.5); }
+        .prep-step.wait { background: rgba(245, 158, 11, 0.12); color: #fcd34d; border-color: rgba(245, 158, 11, 0.35); }
+
+        .print-only { display: none; }
+
+        @media print {
+            @page { size: A4 landscape; margin: 8mm; }
+            body { background: #fff !important; color: #000 !important; padding: 0 !important; max-width: 100% !important; }
+            .top-nav, #requestBuilderCard, #dayCartCard, .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .header, .card { background: #fff !important; color: #000 !important; border: 1px solid #475569 !important; box-shadow: none !important; padding: 10px !important; margin-bottom: 10px !important; }
+            .header h1, .card-head h3 { color: #000 !important; font-size: 14pt !important; }
+            .header p { color: #334155 !important; }
+            .kpi-row { grid-template-columns: repeat(6, 1fr) !important; gap: 6px !important; }
+            .kpi-box { background: #fff !important; border: 1px solid #64748b !important; padding: 6px !important; }
+            .kpi-val, .kpi-lbl { color: #000 !important; }
+            .table-container { overflow: visible !important; border: none !important; }
+            table { width: 100% !important; background: #fff !important; font-size: 8.5pt !important; }
+            th, td { background: #fff !important; color: #000 !important; border: 1px solid #334155 !important; white-space: normal !important; padding: 5px !important; }
+            th { background: #e2e8f0 !important; }
+            .badge, .cat-pill, .prep-step { background: transparent !important; color: #000 !important; border: 1px solid #64748b !important; }
+        }
     </style>
 </head>
 <body>
@@ -79,7 +131,7 @@
 
     <div class="header">
         <h1>📅 بوابة مسؤولين الأيام والأقسام</h1>
-        <p>اختيار سريع ومباشر للأصناف المتاحة حسب رصيد المخزن الفعلي</p>
+        <p>طلب الأصناف من المخزن ومتابعة التوريد والاستلام والتسليم من مسؤول اليوم التحضيري</p>
     </div>
 
     <!-- 1. بيانات المسؤول -->
@@ -116,9 +168,9 @@
     </div>
 
     <!-- 2. الاختيار الذكي للقسم والمنتج والكمية -->
-    <div class="card">
+    <div class="card" id="requestBuilderCard">
         <div class="card-head">
-            <h3>📦 2. اختيار الأصناف المتاحة من المخزن</h3>
+            <h3>📦 2. طلب أصناف جديدة من المخزن</h3>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span class="sync-badge" id="stockSyncStatus">⏳ جاري التحميل...</span>
                 <button type="button" class="btn-mini" id="reloadStockBtn" onclick="loadStockData(true)">🔄 تحديث المخزن</button>
@@ -180,19 +232,126 @@
         <button type="button" class="btn-submit" id="submitBtn" onclick="submitAllDayNeeds()">🚀 إرسال الطلب بالكامل للتجهيز</button>
     </div>
 
+    <!-- 4. متابعة طلبات اليوم والهيستوري وحالة الاستلام والتسليم من اليوم التحضيري -->
+    <div class="card" id="historyCard">
+        <div class="card-head">
+            <h3>📜 3. متابعة طلبات (<span id="historyRoleTitle" style="color:#38bdf8;">اليوم الأول</span>) وحالة التحضيري</h3>
+            <div class="no-print" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span class="sync-badge" id="ordersSyncStatus">⏳ جاري مزامنة الطلبات...</span>
+                <button type="button" class="btn-mini" id="reloadOrdersBtn" onclick="loadDayOrdersHistory(true)">🔄 تحديث الحالات</button>
+                <button type="button" class="btn-mini" style="color:#34d399;" onclick="window.print()">🖨️ طباعة / PDF</button>
+            </div>
+        </div>
+
+        <div class="print-only" style="margin-bottom:10px; font-weight:700;">
+            كشف طلبات وحالات الاستلام والتسليم لـ: <span id="printRoleName"></span>
+        </div>
+
+        <!-- ملخص حالات اليوم والتحضيري -->
+        <div class="kpi-row">
+            <div class="kpi-box">
+                <div class="kpi-val" id="kpiDayTotal">0</div>
+                <div class="kpi-lbl">إجمالي طلبات اليوم</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val green" id="kpiDaySupplied">0</div>
+                <div class="kpi-lbl">مورّد / مصروف 📦</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val blue" id="kpiPrepReceived">0</div>
+                <div class="kpi-lbl">استلمه التحضيري 📥</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val green" id="kpiPrepDelivered">0</div>
+                <div class="kpi-lbl">تم تسليمه لليوم 🚀✅</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val amber" id="kpiDayPending">0</div>
+                <div class="kpi-lbl">قيد الانتظار ⏳</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-val red" id="kpiDayCancelled">0</div>
+                <div class="kpi-lbl">ملغي ❌</div>
+            </div>
+        </div>
+
+        <!-- أزرار تصفية الحالة -->
+        <div class="status-tabs no-print" id="historyStatusTabs">
+            <button type="button" class="st-tab active" onclick="setHistoryStatusFilter('ALL', this)">الكل (الهيستوري الكاملة)</button>
+            <button type="button" class="st-tab" onclick="setHistoryStatusFilter('SUPPLIED', this)">مورّد / مصروف من المخزن 📦</button>
+            <button type="button" class="st-tab" onclick="setHistoryStatusFilter('PREP_RECEIVED', this)">استلمه التحضيري 📥</button>
+            <button type="button" class="st-tab" onclick="setHistoryStatusFilter('PREP_DELIVERED', this)">تم تسليمه لمسؤول اليوم 🚀✅</button>
+            <button type="button" class="st-tab" onclick="setHistoryStatusFilter('PENDING', this)">قيد الانتظار ⏳</button>
+            <button type="button" class="st-tab" onclick="setHistoryStatusFilter('CANCELLED', this)">ملغي ❌</button>
+        </div>
+
+        <!-- فلاتر القسم والبحث -->
+        <div class="history-filters no-print">
+            <div>
+                <select id="historyCatFilter" onchange="renderDayHistory()">
+                    <option value="الكل">كل أقسام المخزن</option>
+                </select>
+            </div>
+            <div>
+                <input type="text" id="historySearchInput" placeholder="🔍 ابحث باسم الصنف أو اسم الطالب..." oninput="renderDayHistory()">
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>القسم</th>
+                        <th>الصنف</th>
+                        <th>الكمية المطلوبة</th>
+                        <th>تفاصيل التوريد</th>
+                        <th>حالة المخزن / الشراء</th>
+                        <th>حالة التحضيري (استلام / تسليم)</th>
+                        <th>اسم الطالب</th>
+                    </tr>
+                </thead>
+                <tbody id="dayHistoryBody">
+                    <tr><td colspan="8" style="padding:24px; color:#94a3b8;">⏳ جاري تحميل سجل طلبات اليوم...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
         const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        const ordersURL = 'https://script.google.com/macros/s/AKfycbxHfp45pmgQpnjfZTgU2pRamDZ26UmqqSI9cShIgqLDyPaUG44SfkKK7NZdKxUPfbDk/exec';
         const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
+
         const IGNORED_SHEETS = new Set(['Sheet5', 'Sheet6', 'أرشيف_الطلبات', 'المشتريات']);
         const CACHE_KEY = 'kafela_day_officer_stock_v1';
         const PROFILE_KEY = 'kafela_day_officer_profile_v1';
+        const LOCAL_HISTORY_KEY = 'kafela_day_officer_history_v1';
+        const SERVER_ORDERS_CACHE_KEY = 'kafela_day_officer_srv_orders_v1';
+
+        // مفاتيح بوابة مسؤول اليوم التحضيري (preparatory.html)
+        const PREP_CHECKS_KEY = 'kafela_prep_checks_v1';
+        const PREP_MANUAL_KEY = 'kafela_prep_manual_v1';
 
         let stockList = [];
         let dayCart = [];
         let selectedStockItem = null;
+        let serverOrders = [];
+        let historyStatusFilter = 'ALL';
 
         const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         const localToday = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+        function normDayKey(str) {
+            return String(str || '')
+                .trim()
+                .replace(/^مسؤول\s+/, '')
+                .replace(/[أإآ]/g, 'ا')
+                .replace(/ة/g, 'ه')
+                .replace(/(^|\s)ال/g, '$1')
+                .replace(/\s+/g, ' ')
+                .toLowerCase();
+        }
 
         function getActiveRole() {
             const sel = document.getElementById('officerRole').value;
@@ -205,10 +364,14 @@
         function onRoleChange() {
             const isOther = document.getElementById('officerRole').value === 'حاجة تانية';
             document.getElementById('customRoleWrap').style.display = isOther ? 'block' : 'none';
+            const role = getActiveRole();
             if (dayCart.length) {
-                document.getElementById('cartRoleBadge').textContent = getActiveRole();
+                document.getElementById('cartRoleBadge').textContent = role;
             }
+            document.getElementById('historyRoleTitle').textContent = role;
+            document.getElementById('printRoleName').textContent = role;
             saveOfficerProfile();
+            renderDayHistory();
         }
 
         function saveOfficerProfile() {
@@ -312,7 +475,6 @@
             const reloadBtn = document.getElementById('reloadStockBtn');
             reloadBtn.disabled = true;
 
-            // 1. تحميل فوري من الكاش المحلي إن وجد
             if (!stockList.length) {
                 try {
                     const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
@@ -326,7 +488,6 @@
                 statusEl.textContent = '⏳ جاري تحديث الأرصدة...';
             }
 
-            // 2. جلب البيانات الحديثة من السيرفر مع إعادة محاولة تلقائية مرة واحدة
             let raw = null;
             for (let attempt = 1; attempt <= 2; attempt++) {
                 try {
@@ -541,6 +702,336 @@
             `).join('');
         }
 
+        // === إدارة الهيستوري وحالة الاستلام والتسليم من مسؤول اليوم التحضيري ===
+        function getLocalHistory() {
+            try { return JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY) || '[]'); } catch (e) { return []; }
+        }
+        function saveLocalHistory(list) {
+            try { localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(list)); } catch (e) {}
+        }
+        function getPrepChecksMap() {
+            try { return JSON.parse(localStorage.getItem(PREP_CHECKS_KEY) || '{}'); } catch (e) { return {}; }
+        }
+        function getPrepManualList() {
+            try { return JSON.parse(localStorage.getItem(PREP_MANUAL_KEY) || '[]'); } catch (e) { return []; }
+        }
+
+        function resolvePrepStatus(orderObj, prepChecks) {
+            // 1. إذا كانت البيانات قادمة من السيرفر مباشرة
+            if (orderObj.srvPrepDelivered || orderObj.srvPrepReceived) {
+                const deliv = Boolean(orderObj.srvPrepDelivered);
+                const recv = deliv || Boolean(orderObj.srvPrepReceived);
+                return { received: recv, delivered: deliv };
+            }
+            // 2. المطابقة المباشرة بمفتاح بوابة اليوم التحضيري: sys_{row}_{item}_{date}
+            if (orderObj.prepUid && prepChecks[orderObj.prepUid]) {
+                const st = prepChecks[orderObj.prepUid];
+                const deliv = Boolean(st.delivered);
+                const recv = deliv || Boolean(st.received);
+                return { received: recv, delivered: deliv };
+            }
+            // 3. مطابقة احتياطية بالاسم والتاريخ في حال تغيّر رقم الصف في الشيت
+            const suffix = `_${orderObj.item}_${orderObj.date}`;
+            for (const [k, v] of Object.entries(prepChecks)) {
+                if (k.startsWith('sys_') && k.endsWith(suffix) && v) {
+                    const deliv = Boolean(v.delivered);
+                    const recv = deliv || Boolean(v.received);
+                    return { received: recv, delivered: deliv };
+                }
+            }
+            return { received: false, delivered: false };
+        }
+
+        function renderPrepStatusCell(orderObj) {
+            if (orderObj.group === 'CANCELLED') {
+                return '<span class="prep-step">ملغي —</span>';
+            }
+            if (orderObj.prepDelivered) {
+                return `<div class="prep-stack">
+                    <span class="prep-step recv-ok">📥 استلمه التحضيري ✅</span>
+                    <span class="prep-step deliv-ok">🚀 تم تسليمه لليوم ✅</span>
+                </div>`;
+            }
+            if (orderObj.prepReceived) {
+                return `<div class="prep-stack">
+                    <span class="prep-step recv-ok">📥 استلمه التحضيري ✅</span>
+                    <span class="prep-step wait">🚀 لم يُسلّم لليوم بعد ⏳</span>
+                </div>`;
+            }
+            if (orderObj.group === 'SUPPLIED') {
+                return `<div class="prep-stack">
+                    <span class="prep-step wait">📥 بانتظار استلام التحضيري ⏳</span>
+                    <span class="prep-step">🚀 لم يُسلّم بعد</span>
+                </div>`;
+            }
+            return '<span class="prep-step">بانتظار التوريد أولاً ⏳</span>';
+        }
+
+        function parseDayAndName(row) {
+            const rawName = String(row.requesterName || '').trim();
+            if (row.targetDay && String(row.targetDay).trim()) {
+                return { day: String(row.targetDay).trim(), name: rawName.replace(/^\[.*?\]\s*/, '') || '-' };
+            }
+            if (row.day && String(row.day).trim() && row.day !== 'غير محدد') {
+                return { day: String(row.day).trim(), name: rawName.replace(/^\[.*?\]\s*/, '') || '-' };
+            }
+            const m = rawName.match(/^\[([^\]]+)\]\s*(.*)$/);
+            if (m) return { day: m[1].trim(), name: m[2].trim() || '-' };
+            return { day: 'عام', name: rawName || '-' };
+        }
+
+        function classifyOrderRow(r) {
+            const rawStatus = String(r.status || r.orderStatus || '').toUpperCase();
+            const reqQty = parseFloat(r.requested_qty ?? r.qty ?? r.purchase_qty_needed) || 0;
+            const fromStock = parseFloat(r.fulfilled_from_stock ?? r.fulfilled) || 0;
+            const needBuy = parseFloat(r.purchase_qty_needed) || 0;
+
+            if (rawStatus === 'REJECTED' || rawStatus === 'CANCELLED') {
+                return {
+                    group: 'CANCELLED',
+                    badgeClass: 'b-cancel',
+                    badgeText: 'ملغي ❌',
+                    detailText: 'تم إلغاء الطلب'
+                };
+            }
+
+            if (rawStatus === 'FULFILLED') {
+                return {
+                    group: 'SUPPLIED',
+                    badgeClass: 'b-supplied',
+                    badgeText: 'تم الصرف من المخزن 📦',
+                    detailText: `صُرف بالكامل (${fromStock || reqQty} ${r.unit || ''})`
+                };
+            }
+
+            if (rawStatus === 'PO_CONFIRMED') {
+                const detail = fromStock > 0
+                    ? `مخزن: ${fromStock} + شراء: ${needBuy || Math.max(0, reqQty - fromStock)}`
+                    : `تم الشراء والتوريد (${needBuy || reqQty} ${r.unit || ''})`;
+                return {
+                    group: 'SUPPLIED',
+                    badgeClass: 'b-supplied',
+                    badgeText: 'تم التوريد والشراء ✅',
+                    detailText: detail
+                };
+            }
+
+            if (fromStock > 0 && needBuy > 0) {
+                return {
+                    group: 'PENDING',
+                    badgeClass: 'b-partial',
+                    badgeText: 'توريد جزئي (بانتظار الباقي) 🌓',
+                    detailText: `مخزن: ${fromStock} | قيد الشراء: ${needBuy}`
+                };
+            }
+
+            return {
+                group: 'PENDING',
+                badgeClass: 'b-pending',
+                badgeText: 'قيد الانتظار ⏳',
+                detailText: needBuy > 0 ? `بانتظار شراء (${needBuy} ${r.unit || ''})` : 'بانتظار التجهيز والصرف'
+            };
+        }
+
+        function normalizeServerOrder(r) {
+            const { day, name } = parseDayAndName(r);
+            const reqQty = parseFloat(r.requested_qty ?? r.purchase_qty_needed) || 0;
+            const info = classifyOrderRow(r);
+            return {
+                uid: `srv_${r.row || ''}_${day}_${r.category}_${r.item}_${r.date}_${reqQty}`,
+                prepUid: `sys_${r.row}_${r.item}_${r.date}`,
+                day,
+                category: String(r.category || '-').trim(),
+                item: String(r.item || '-').trim(),
+                qty: reqQty,
+                unit: String(r.unit || 'قطعه').trim(),
+                requester: name,
+                date: String(r.date || '-').trim(),
+                group: info.group,
+                badgeClass: info.badgeClass,
+                badgeText: info.badgeText,
+                detailText: info.detailText,
+                srvPrepReceived: Boolean(r.prepReceived || r.received || r.prep_received),
+                srvPrepDelivered: Boolean(r.prepDelivered || r.delivered || r.prep_delivered)
+            };
+        }
+
+        async function loadDayOrdersHistory(forceAlert = false) {
+            const statusEl = document.getElementById('ordersSyncStatus');
+            const btn = document.getElementById('reloadOrdersBtn');
+            btn.disabled = true;
+
+            if (!serverOrders.length) {
+                try {
+                    const cached = JSON.parse(localStorage.getItem(SERVER_ORDERS_CACHE_KEY) || 'null');
+                    if (Array.isArray(cached)) {
+                        serverOrders = cached;
+                        renderDayHistory();
+                    }
+                } catch (e) {}
+            }
+            statusEl.textContent = '⏳ جاري تحديث الحالات...';
+
+            const sessionPass = sessionStorage.getItem('kafela_admin_pass') || sessionStorage.getItem('adminPass') || '';
+            const candidateUrls = sessionPass
+                ? [
+                    purchaseURL + '?pass=' + encodeURIComponent(sessionPass),
+                    ordersURL + '?pass=' + encodeURIComponent(sessionPass),
+                    purchaseURL,
+                    ordersURL
+                  ]
+                : [purchaseURL, ordersURL];
+
+            let fetchedArray = null;
+            for (const url of candidateUrls) {
+                try {
+                    const data = await fetchWithTimeout(url, 10000);
+                    if (Array.isArray(data)) {
+                        fetchedArray = data;
+                        break;
+                    }
+                } catch (e) {}
+            }
+
+            if (Array.isArray(fetchedArray)) {
+                serverOrders = fetchedArray.map(normalizeServerOrder).reverse();
+                try { localStorage.setItem(SERVER_ORDERS_CACHE_KEY, JSON.stringify(serverOrders)); } catch (e) {}
+                statusEl.textContent = '✅ الحالات محدثة';
+            } else {
+                statusEl.textContent = serverOrders.length ? '📋 يعرض آخر تحديث + السجل المحلي' : '📋 السجل المحلي لطلباتك';
+                if (forceAlert && !serverOrders.length) {
+                    alert('ℹ️ يتم عرض السجل المحفوظ على جهازك. للمزامنة الكاملة لجميع الطلبات، افتح الصفحة الرئيسية أولاً.');
+                }
+            }
+
+            renderDayHistory();
+            btn.disabled = false;
+        }
+
+        function getMergedOrdersForCurrentRole() {
+            const activeRoleNorm = normDayKey(getActiveRole());
+            const localList = getLocalHistory();
+            const prepChecks = getPrepChecksMap();
+            const prepManuals = getPrepManualList();
+
+            // 1. دمج طلبات السيرفر مع السجل المحلي
+            const merged = [...serverOrders];
+            localList.forEach(loc => {
+                const isDup = merged.some(srv =>
+                    normDayKey(srv.day) === normDayKey(loc.day) &&
+                    srv.category === loc.category &&
+                    srv.item === loc.item &&
+                    srv.date === loc.date &&
+                    Math.abs((parseFloat(srv.qty) || 0) - (parseFloat(loc.qty) || 0)) < 0.01
+                );
+                if (!isDup) merged.unshift(loc);
+            });
+
+            // 2. إضافة أي بنود يدوية أضافها مسؤول اليوم التحضيري لهذا اليوم
+            prepManuals.forEach(pm => {
+                const st = prepChecks[pm.uid] || {};
+                merged.unshift({
+                    uid: pm.uid,
+                    prepUid: pm.uid,
+                    day: pm.day,
+                    category: 'عهدة التحضيري',
+                    item: pm.item,
+                    qty: pm.qty,
+                    unit: pm.unit || 'قطعه',
+                    requester: pm.officer || 'مسؤول اليوم التحضيري',
+                    date: 'إضافة يدوية',
+                    group: 'SUPPLIED',
+                    badgeClass: 'b-supplied',
+                    badgeText: 'إضافة من التحضيري ✍️',
+                    detailText: 'عهدة مسجلة ببوابة التحضيري',
+                    prepReceived: Boolean(st.delivered || st.received),
+                    prepDelivered: Boolean(st.delivered)
+                });
+            });
+
+            // 3. تصفية حسب اليوم المختار وربط حالة الاستلام والتسليم من التحضيري لكل صف
+            return merged
+                .filter(o => normDayKey(o.day) === activeRoleNorm)
+                .map(o => {
+                    if (o.prepReceived !== undefined && o.prepDelivered !== undefined) return o;
+                    const pStatus = resolvePrepStatus(o, prepChecks);
+                    return {
+                        ...o,
+                        prepReceived: pStatus.received,
+                        prepDelivered: pStatus.delivered
+                    };
+                });
+        }
+
+        function setHistoryStatusFilter(filterKey, btnEl) {
+            historyStatusFilter = filterKey;
+            document.querySelectorAll('#historyStatusTabs .st-tab').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            renderDayHistory();
+        }
+
+        function renderDayHistory() {
+            const role = getActiveRole();
+            const roleOrders = getMergedOrdersForCurrentRole();
+
+            // تحديث الإحصائيات الخاصة باليوم والتحضيري
+            const suppliedCount = roleOrders.filter(o => o.group === 'SUPPLIED').length;
+            const prepRecvCount = roleOrders.filter(o => o.prepReceived).length;
+            const prepDelivCount = roleOrders.filter(o => o.prepDelivered).length;
+            const pendingCount = roleOrders.filter(o => o.group === 'PENDING').length;
+            const cancelledCount = roleOrders.filter(o => o.group === 'CANCELLED').length;
+
+            document.getElementById('kpiDayTotal').textContent = roleOrders.length;
+            document.getElementById('kpiDaySupplied').textContent = suppliedCount;
+            document.getElementById('kpiPrepReceived').textContent = prepRecvCount;
+            document.getElementById('kpiPrepDelivered').textContent = prepDelivCount;
+            document.getElementById('kpiDayPending').textContent = pendingCount;
+            document.getElementById('kpiDayCancelled').textContent = cancelledCount;
+
+            // تحديث قائمة الأقسام داخل الهيستوري
+            const catSel = document.getElementById('historyCatFilter');
+            const prevCat = catSel.value;
+            const cats = [...new Set(roleOrders.map(o => o.category).filter(Boolean))];
+            catSel.innerHTML = '<option value="الكل">كل أقسام المخزن (' + cats.length + ')</option>' +
+                cats.map(c => `<option value="${escH(c)}">${escH(c)}</option>`).join('');
+            catSel.value = cats.includes(prevCat) ? prevCat : 'الكل';
+
+            const catFilter = catSel.value;
+            const q = document.getElementById('historySearchInput').value.trim().toLowerCase();
+
+            const filtered = roleOrders.filter(o => {
+                let matchSt = true;
+                if (historyStatusFilter === 'SUPPLIED') matchSt = (o.group === 'SUPPLIED');
+                else if (historyStatusFilter === 'PREP_RECEIVED') matchSt = o.prepReceived;
+                else if (historyStatusFilter === 'PREP_DELIVERED') matchSt = o.prepDelivered;
+                else if (historyStatusFilter === 'PENDING') matchSt = (o.group === 'PENDING');
+                else if (historyStatusFilter === 'CANCELLED') matchSt = (o.group === 'CANCELLED');
+
+                const matchCat = catFilter === 'الكل' || o.category === catFilter;
+                const matchQ = !q || o.item.toLowerCase().includes(q) || o.requester.toLowerCase().includes(q) || o.category.toLowerCase().includes(q);
+                return matchSt && matchCat && matchQ;
+            });
+
+            const tbody = document.getElementById('dayHistoryBody');
+            if (!filtered.length) {
+                tbody.innerHTML = `<tr><td colspan="8" style="padding:24px; color:#94a3b8;">لا توجد طلبات مسجلة لـ <strong>${escH(role)}</strong> مطابقة للتصفية الحالية.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(o => `
+                <tr>
+                    <td>${escH(o.date)}</td>
+                    <td><span class="cat-pill">${escH(o.category)}</span></td>
+                    <td style="font-weight:700;">${escH(o.item)}</td>
+                    <td style="font-weight:700; color:#38bdf8;">${escH(o.qty)} ${escH(o.unit)}</td>
+                    <td style="color:#cbd5e1; font-size:0.86em;">${escH(o.detailText)}</td>
+                    <td><span class="badge ${escH(o.badgeClass)}">${escH(o.badgeText)}</span></td>
+                    <td>${renderPrepStatusCell(o)}</td>
+                    <td>${escH(o.requester)}</td>
+                </tr>
+            `).join('');
+        }
+
         async function submitAllDayNeeds() {
             const role = getActiveRole();
             const name = document.getElementById('officerName').value.trim();
@@ -558,6 +1049,7 @@
 
             const today = localToday();
             let successCount = 0;
+            const localHist = getLocalHistory();
 
             try {
                 for (let i = 0; i < dayCart.length; i++) {
@@ -582,16 +1074,43 @@
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                     });
                     const result = await res.json();
-                    if (result && !result.error) successCount++;
+                    if (result && !result.error) {
+                        successCount++;
+                        const classified = classifyOrderRow({
+                            status: result.orderStatus || (result.fulfilled >= itemObj.qty ? 'FULFILLED' : 'NEED_PURCHASE'),
+                            requested_qty: itemObj.qty,
+                            fulfilled_from_stock: result.fulfilled ?? itemObj.qty,
+                            purchase_qty_needed: result.purchaseNeeded ?? 0,
+                            unit: itemObj.unit
+                        });
+                        localHist.unshift({
+                            uid: 'loc_' + Date.now() + '_' + i,
+                            day: role,
+                            category: itemObj.category,
+                            item: itemObj.item,
+                            qty: itemObj.qty,
+                            unit: itemObj.unit,
+                            requester: name,
+                            date: today,
+                            group: classified.group,
+                            badgeClass: classified.badgeClass,
+                            badgeText: classified.badgeText,
+                            detailText: classified.detailText
+                        });
+                    }
                 }
 
+                saveLocalHistory(localHist);
+
                 if (successCount === dayCart.length) {
-                    alert(`✅ تم إرسال (${successCount}) صنف بنجاح لـ (${role})!`);
+                    alert(`✅ تم إرسال (${successCount}) صنف بنجاح لـ (${role}) وتمت إضافتها لسجل المتابعة!`);
                     dayCart = [];
                     renderDayCart();
-                    await loadStockData(false);
+                    renderDayHistory();
+                    await Promise.all([loadStockData(false), loadDayOrdersHistory(false)]);
                     if (document.getElementById('reqCategory').value) onCategoryChange();
                 } else {
+                    renderDayHistory();
                     alert(`⚠️ تم إرسال ${successCount} من أصل ${dayCart.length} صنف. يرجى مراجعة الإدارة.`);
                 }
             } catch (err) {
@@ -602,8 +1121,17 @@
             }
         }
 
+        // تحديث تلقائي فوري إذا قام مسؤول اليوم التحضيري بتعديل الاستلام/التسليم في تبويب آخر
+        window.addEventListener('storage', (e) => {
+            if (e.key === PREP_CHECKS_KEY || e.key === PREP_MANUAL_KEY) {
+                renderDayHistory();
+            }
+        });
+
         loadOfficerProfile();
+        renderDayHistory();
         loadStockData(false);
+        loadDayOrdersHistory(false);
     </script>
 </body>
 </html>
