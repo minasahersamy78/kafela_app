@@ -100,13 +100,13 @@
 
         <div class="tabs" id="dayTabs">
             <button class="tab-btn active" onclick="setDayFilter('الكل', this)">الكل</button>
+            <button class="tab-btn" onclick="setDayFilter('مسؤول اليوم التحضيري', this)">مسؤول اليوم التحضيري</button>
             <button class="tab-btn" onclick="setDayFilter('اليوم الأول', this)">اليوم الأول</button>
             <button class="tab-btn" onclick="setDayFilter('اليوم الثاني', this)">اليوم الثاني</button>
             <button class="tab-btn" onclick="setDayFilter('اليوم الثالث', this)">اليوم الثالث</button>
-            <button class="tab-btn" onclick="setDayFilter('اليوم الرابع', this)">اليوم الرابع</button>
-            <button class="tab-btn" onclick="setDayFilter('مسؤول المعرض', this)">مسؤول المعرض</button>
-            <button class="tab-btn" onclick="setDayFilter('مسؤول مسابقات الأهالي', this)">مسؤول مسابقات الأهالي</button>
-            <button class="tab-btn" onclick="setDayFilter('عام', this)">عام / أخرى</button>
+            <button class="tab-btn" onclick="setDayFilter('الأكل', this)">الأكل</button>
+            <button class="tab-btn" onclick="setDayFilter('المعرض', this)">المعرض</button>
+            <button class="tab-btn" onclick="setDayFilter('مسابقات الأهالي', this)">مسابقات الأهالي</button>
         </div>
 
         <!-- إضافة بند خارجي للتشيك ليست -->
@@ -125,13 +125,13 @@
                         <option value="كرتونة">كرتونة</option>
                     </select>
                     <select id="mDay">
+                        <option value="مسؤول اليوم التحضيري">مسؤول اليوم التحضيري</option>
                         <option value="اليوم الأول">اليوم الأول</option>
                         <option value="اليوم الثاني">اليوم الثاني</option>
                         <option value="اليوم الثالث">اليوم الثالث</option>
-                        <option value="اليوم الرابع">اليوم الرابع</option>
-                        <option value="مسؤول المعرض">مسؤول المعرض</option>
-                        <option value="مسؤول مسابقات الأهالي">مسؤول مسابقات الأهالي</option>
-                        <option value="عام">عام / أخرى</option>
+                        <option value="الأكل">الأكل</option>
+                        <option value="المعرض">المعرض</option>
+                        <option value="مسابقات الأهالي">مسابقات الأهالي</option>
                     </select>
                     <input type="text" id="mOfficer" placeholder="اسم المسؤول المستلم (اختياري)">
                     <button type="submit" class="btn btn-primary">إضافة للقائمة ✅</button>
