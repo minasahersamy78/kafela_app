@@ -4,389 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>بوابة مسؤولين الأيام والأقسام - أسرة الأنبا ابرام</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1100px; margin: auto; box-sizing: border-box; }
-        .top-nav { display: flex; gap: 8px; background: #1e293b; padding: 12px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
-        .nav-btn { color: #f8fafc; text-decoration: none; padding: 8px 13px; border-radius: 10px; font-weight: 700; background: #0f172a; border: 1px solid #334155; font-size: 0.88em; transition: 0.2s; }
-        .nav-btn:hover, .nav-btn.active { background: #a855f7; color: #fff; border-color: #c084fc; }
-        .nav-home { background: #2563eb; color: #fff; border-color: #3b82f6; }
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --primary: #a855f7;
+            --blue: #3b82f6;
+            --green: #10b981;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); padding: 16px; max-width: 1050px; margin: auto; }
+        
+        .top-nav { display: flex; gap: 8px; background: var(--card); padding: 10px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { color: var(--text); text-decoration: none; padding: 7px 12px; border-radius: 10px; font-weight: 700; background: var(--bg); border: 1px solid var(--border); font-size: 0.86em; }
+        .nav-btn:hover, .nav-btn.active { background: var(--primary); color: #fff; border-color: #c084fc; }
+        .nav-home { background: #2563eb; color: #fff; border-color: var(--blue); }
 
-        .header { text-align: center; padding: 24px 20px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%); border-radius: 20px; margin-bottom: 25px; border: 2px solid #a855f7; }
-        .header h1 { margin: 0; font-size: 1.8em; color: #c084fc; }
-        .header p { color: #cbd5e1; margin: 8px 0 0; font-weight: 600; }
+        .header { text-align: center; padding: 20px 16px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.14), rgba(37, 99, 235, 0.14)); border-radius: 18px; margin-bottom: 20px; border: 2px solid var(--primary); }
+        .header h1 { margin: 0; font-size: 1.65em; color: #c084fc; }
+        .header p { color: #cbd5e1; margin: 6px 0 0; font-size: 0.95em; }
 
-        .card { background: #1e293b; padding: 24px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        .card h3 { margin: 0 0 18px; color: #c084fc; font-size: 1.2em; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
-        label { display: block; color: #93c5fd; font-weight: 700; margin-bottom: 6px; font-size: 0.94em; }
-        input, select { width: 100%; padding: 12px 14px; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #f8fafc; font-family: 'Cairo'; font-size: 15px; box-sizing: border-box; }
-        input:focus, select:focus { border-color: #a855f7; outline: none; }
+        .card { background: var(--card); padding: 20px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .card-head h3 { margin: 0; color: #c084fc; font-size: 1.15em; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 14px; }
+        label { display: block; color: #93c5fd; font-weight: 700; margin-bottom: 6px; font-size: 0.92em; }
+        input, select { width: 100%; padding: 11px 13px; border: 2px solid var(--border); border-radius: 11px; background: var(--bg); color: var(--text); font-family: inherit; font-size: 15px; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; }
         input:disabled, select:disabled { opacity: 0.55; cursor: not-allowed; }
 
-        .smart-hint { margin-top: 8px; padding: 10px 14px; border-radius: 10px; font-size: 0.92em; font-weight: 700; background: #0f172a; border: 1px solid #334155; color: #94a3b8; }
-        .smart-hint.ok { border-color: #10b981; color: #34d399; background: rgba(16, 185, 129, 0.08); }
+        .smart-hint { margin-top: 8px; padding: 10px 14px; border-radius: 10px; font-size: 0.9em; font-weight: 700; background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
+        .smart-hint.ok { border-color: var(--green); color: #34d399; background: rgba(16, 185, 129, 0.08); }
         .smart-hint.warn { border-color: #f59e0b; color: #fbbf24; background: rgba(245, 158, 11, 0.08); }
         .smart-hint.err { border-color: #ef4444; color: #f87171; background: rgba(239, 68, 68, 0.08); }
 
-        .btn-add { width: 100%; padding: 13px; border: none; border-radius: 12px; background: #3b82f6; color: #fff; font-family: 'Cairo'; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-mini { padding: 7px 13px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg); color: #38bdf8; font-family: inherit; font-size: 0.86em; font-weight: 700; cursor: pointer; }
+        .btn-mini:hover:not(:disabled) { border-color: #38bdf8; }
+        .btn-mini:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-add { width: 100%; padding: 13px; border: none; border-radius: 11px; background: var(--blue); color: #fff; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .btn-add:hover:not(:disabled) { background: #2563eb; }
         .btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn-submit { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #7e22ce 0%, #10b981 100%); color: #fff; font-family: 'Cairo'; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-submit { width: 100%; padding: 14px; border: none; border-radius: 11px; background: linear-gradient(135deg, #7e22ce, var(--green)); color: #fff; font-family: inherit; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 14px; }
         .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #334155; }
-        table { width: 100%; border-collapse: collapse; background: #0f172a; font-size: 0.92em; }
-        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; }
-        th { background: #1e293b; color: #c084fc; }
-        .status-ready { color: #10b981; font-weight: 700; }
-        .status-wait { color: #f59e0b; font-weight: 700; }
-        .status-rej { color: #ef4444; font-weight: 700; }
-    </style>
-</head>
-<body>
-
-    <div class="top-nav">
-        <a href="index.html" class="nav-btn nav-home">🏠 الرئيسية</a>
-        <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
-        <a href="inventory.html" class="nav-btn">📦 المخزون</a>
-        <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
-        <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
-        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
-        <a href="reports.html" class="nav-btn">📊 التقارير</a>
-        <a href="preparatory.html" class="nav-btn">✅ اليوم التحضيري</a>
-        <a href="day-officer.html" class="nav-btn active">📅 مسؤولين الأيام</a>
-    </div>
-
-    <div class="header">
-        <h1>📅 بوابة مسؤولين الأيام والأقسام</h1>
-        <p>اختيار ذكي للأقسام والأصناف حسب الرصيد المتاح فعلياً في المخزن</p>
-    </div>
-
-    <!-- بيانات المسؤول -->
-    <div class="card">
-        <h3>👤 1. بيانات المسؤول واليوم / القسم</h3>
-        <div class="grid">
-            <div>
-                <label>اختر يومك أو قسمك المسؤول عنه:</label>
-                <select id="officerRole" onchange="loadMyRequests()" required>
-                    <option value="مسؤول اليوم التحضيري">مسؤول اليوم التحضيري</option>
-                    <option value="اليوم الأول">اليوم الأول</option>
-                    <option value="اليوم الثاني">اليوم الثاني</option>
-                    <option value="اليوم الثالث">اليوم الثالث</option>
-                    <option value="الأكل">الأكل</option>
-                    <option value="المعرض">المعرض</option>
-                    <option value="مسابقات الأهالي">مسابقات الأهالي</option>
-                </select>
-            </div>
-            <div>
-                <label>اسم المسؤول:</label>
-                <input type="text" id="officerName" placeholder="اكتب اسمك الثلاثي..." required>
-            </div>
-            <div>
-                <label>رقم الموبايل للتواصل:</label>
-                <input type="tel" id="officerPhone" placeholder="01xxxxxxxxx" required>
-            </div>
-        </div>
-    </div>
-
-    <!-- الاختيار الذكي للقسم والمنتج والكمية -->
-    <div class="card">
-        <h3>📦 2. اختيار الأصناف المتاحة من المخزن</h3>
-        <div class="grid">
-            <div>
-                <label>أولاً: اختر القسم:</label>
-                <select id="reqCategory" onchange="onCategoryChange()">
-                    <option value="" disabled selected>⏳ جاري تحميل أقسام المخزن...</option>
-                </select>
-            </div>
-
-            <div>
-                <label>ثانياً: اختر المنتج (من هذا القسم فقط):</label>
-                <select id="reqItemSelect" onchange="onProductSelect()" disabled>
-                    <option value="" disabled selected>-- اختر القسم أولاً --</option>
-                </select>
-            </div>
-
-            <div>
-                <label>ثالثاً: الكمية المطلوبة (بحد أقصى المتاح):</label>
-                <input type="number" id="reqQty" min="1" step="0.1" placeholder="اختر المنتج أولاً..." oninput="enforceStockLimit()" disabled>
-            </div>
-
-            <div>
-                <label>الوحدة:</label>
-                <input type="text" id="reqUnit" placeholder="تُحدد تلقائياً..." readonly disabled>
-            </div>
-        </div>
-
-        <div class="smart-hint" id="stockStatusBox">
-            💡 ابدأ باختيار <strong>القسم</strong> لتظهر لك منتجاته المتاحة في المخزن فقط.
-        </div>
-
-        <button type="button" class="btn-add" id="addCartBtn" onclick="addNeedToCart()" disabled>➕ إضافة الصنف لقائمة طلبات اليوم</button>
-    </div>
-
-    <!-- سلة طلبات اليوم -->
-    <div class="card" id="dayCartCard" style="display:none; border: 2px solid #10b981;">
-        <h3 style="color:#34d399;">🛒 قائمة الأصناف الجاهزة للإرسال (<span id="cartRoleBadge"></span>)</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>القسم</th>
-                        <th>الصنف</th>
-                        <th>الكمية المطلوبة</th>
-                        <th>الوحدة</th>
-                        <th>حذف</th>
-                    </tr>
-                </thead>
-                <tbody id="dayCartBody"></tbody>
-            </table>
-        </div>
-        <button type="button" class="btn-submit" id="submitBtn" onclick="submitAllDayNeeds()">🚀 إرسال الطلب بالكامل للتجهيز</button>
-    </div>
-
-    <!-- متابعة الطلبات السابقة -->
-    <div class="card">
-        <h3>📋 متابعة حالة طلبات (<span id="trackRoleTitle">مسؤول اليوم التحضيري</span>)</h3>
-        <div id="passBox" style="margin-bottom:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <input type="password" id="viewPass" placeholder="أدخل كلمة مرور النظام لعرض حالة الطلبات..." style="max-width:320px;">
-            <button onclick="loadMyRequests()" style="padding:12px 20px; border-radius:10px; border:none; background:#7e22ce; color:#fff; font-family:'Cairo'; font-weight:700; cursor:pointer;">عرض الطلبات 🔄</button>
-        </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>الصنف</th>
-                        <th>القسم</th>
-                        <th>الكمية</th>
-                        <th>المسؤول</th>
-                        <th>التاريخ</th>
-                        <th>حالة التجهيز عند اليوم التحضيري</th>
-                    </tr>
-                </thead>
-                <tbody id="myRequestsBody">
-                    <tr><td colspan="6">⏳ جاري التحقق من الجلسة...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
-        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
-
-        let stockList = [];
-        let dayCart = [];
-        let selectedStockItem = null;
-
-        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-        // حساب الكمية المتبقية فعلياً بعد خصم ما تم إضافته للسلة الحالية
-        function getEffectiveRemaining(sheet, itemName) {
-            const found = stockList.find(i => i.sheet === sheet && i.item === itemName);
-            if (!found) return 0;
-            const rawAvail = parseFloat(found.remaining) || 0;
-            const inCart = dayCart
-                .filter(c => c.category === sheet && c.item === itemName)
-                .reduce((sum, c) => sum + (parseFloat(c.qty) || 0), 0);
-            return Math.max(0, +(rawAvail - inCart).toFixed(2));
-        }
-
-        async function initStock() {
-            const catSel = document.getElementById('reqCategory');
-            try {
-                const res = await fetch(inventoryURL);
-                const data = await res.json();
-                stockList = Array.isArray(data) ? data.filter(i => i.sheet && i.item) : [];
-
-                const cats = [...new Set(stockList.map(i => i.sheet))];
-                catSel.innerHTML = '<option value="" disabled selected>-- اختر القسم --</option>';
-
-                cats.forEach(c => {
-                    const itemsInCat = stockList.filter(i => i.sheet === c);
-                    const availCount = itemsInCat.filter(i => (parseFloat(i.remaining) || 0) > 0).length;
-                    const opt = document.createElement('option');
-                    opt.value = c;
-                    opt.textContent = `${c} (${availCount} صنف متاح من ${itemsInCat.length})`; catSel.appendChild(opt); }); } catch (e) { catSel.innerHTML = '<option value="" disabled selected>⚠️ تعذر تحميل الأقسام</option>'; console.error(e); } }  // عند اختيار القسم: يعرض فقط منتجات هذا القسم مع الكمية المتاحة لكل منتج function onCategoryChange() { const cat = document.getElementById('reqCategory').value; const itemSel = document.getElementById('reqItemSelect'); const qtyInput = document.getElementById('reqQty'); const unitInput = document.getElementById('reqUnit'); const hintBox = document.getElementById('stockStatusBox');  selectedStockItem = null; qtyInput.value = ''; qtyInput.disabled = true; unitInput.value = ''; document.getElementById('addCartBtn').disabled = true;  const filteredItems = stockList.filter(i => i.sheet === cat); itemSel.innerHTML = '<option value="" disabled selected>-- اختر المنتج من قسم ' + escH(cat) + ' --</option>';  if (!filteredItems.length) { itemSel.disabled = true; hintBox.className = 'smart-hint warn'; hintBox.innerHTML = '⚠️ لا توجد أصناف مسجلة في هذا القسم حالياً.'; return; }  // ترتيب الأصناف: المتاح أولاً ثم المنتهي filteredItems.sort((a, b) => (parseFloat(b.remaining) \vert{}\vert{} 0) - (parseFloat(a.remaining) \vert{}\vert{} 0));  filteredItems.forEach(it => { const effAvail = getEffectiveRemaining(it.sheet, it.item); const opt = document.createElement('option'); opt.value = it.item; if (effAvail > 0) { opt.textContent = `${it.item} — (المتاح بالمخزن: ${effAvail}${it.unit})`;
-                } else {
-                    opt.textContent = `${it.item} — (نفد من المخزن: 0 ${it.unit})`;
-                    opt.disabled = true;
-                }
-                itemSel.appendChild(opt);
-            });
-
-            itemSel.disabled = false;
-            const availableItemsCount = filteredItems.filter(it => getEffectiveRemaining(it.sheet, it.item) > 0).length;
-            hintBox.className = availableItemsCount > 0 ? 'smart-hint ok' : 'smart-hint err';
-            hintBox.innerHTML = availableItemsCount > 0
-                ? `📂 تم تحميل <strong>${availableItemsCount}</strong> صنف متاح في قسم <strong>${escH(cat)}</strong>. اختر المنتج الآن.`
-                : `❌ جميع أصناف قسم <strong>${escH(cat)}</strong> رصيدها صفر في المخزن حالياً.`; }  // عند اختيار المنتج: يضبط الوحدة والحد الأقصى للكمية حسب المتاح بالمخزن فقط function onProductSelect() { const cat = document.getElementById('reqCategory').value; const itemName = document.getElementById('reqItemSelect').value; const qtyInput = document.getElementById('reqQty'); const unitInput = document.getElementById('reqUnit'); const hintBox = document.getElementById('stockStatusBox'); const addBtn = document.getElementById('addCartBtn');  selectedStockItem = stockList.find(i => i.sheet === cat && i.item === itemName) \vert{}\vert{} null; if (!selectedStockItem) return;  const effAvail = getEffectiveRemaining(cat, itemName); unitInput.value = selectedStockItem.unit \vert{}\vert{} 'قطعه';  if (effAvail <= 0) { qtyInput.value = 0; qtyInput.disabled = true; addBtn.disabled = true; hintBox.className = 'smart-hint err'; hintBox.innerHTML = `❌ الصنف <strong>${escH(itemName)}</strong> غير متاح (الكمية المتبقية بالمخزن: 0).`;
-                return;
-            }
-
-            qtyInput.disabled = false;
-            qtyInput.min = effAvail < 1 ? 0.1 : 1;
-            qtyInput.max = effAvail;
-            qtyInput.value = effAvail >= 1 ? 1 : effAvail;
-            addBtn.disabled = false;
-
-            hintBox.className = 'smart-hint ok';
-            hintBox.innerHTML = `✅ المتاح بالمخزن من <strong>${escH(itemName)}</strong>: <strong>${effAvail} ${escH(selectedStockItem.unit)}</strong> (لا يمكن طلب أكثر من هذه الكمية).`; }  // منع إدخال كمية أكبر من الرصيد المتاح بالمخزن function enforceStockLimit() { if (!selectedStockItem) return; const qtyInput = document.getElementById('reqQty'); const hintBox = document.getElementById('stockStatusBox'); const addBtn = document.getElementById('addCartBtn'); const effAvail = getEffectiveRemaining(selectedStockItem.sheet, selectedStockItem.item); let val = parseFloat(qtyInput.value);  if (isNaN(val) \vert{}\vert{} val <= 0) { addBtn.disabled = true; hintBox.className = 'smart-hint warn'; hintBox.innerHTML = `⚠️ أدخل كمية صحيحة (من 1 إلى ${effAvail} ${escH(selectedStockItem.unit)}).`; return; }  if (val > effAvail) { qtyInput.value = effAvail; val = effAvail; hintBox.className = 'smart-hint warn'; hintBox.innerHTML = `⚠️ تم ضبط الكمية تلقائياً للحد الأقصى المتاح في المخزن وهو <strong>${effAvail} ${escH(selectedStockItem.unit)}</strong>.`; } else { hintBox.className = 'smart-hint ok'; hintBox.innerHTML = `✅ الكمية المطلوبة: <strong>${val} ${escH(selectedStockItem.unit)}</strong> (متبقي بعد الطلب: <strong>${+(effAvail - val).toFixed(2)}</strong>).`;
-            }
-            addBtn.disabled = false;
-        }
-
-        function addNeedToCart() {
-            if (!selectedStockItem) return;
-            const cat = selectedStockItem.sheet;
-            const itemName = selectedStockItem.item;
-            const unit = selectedStockItem.unit || 'قطعه';
-            const effAvail = getEffectiveRemaining(cat, itemName);
-            const qty = parseFloat(document.getElementById('reqQty').value);
-
-            if (!qty || qty <= 0 || qty > effAvail) {
-                return alert(`⚠️ الكمية غير صالحة! المتاح بالمخزن: ${effAvail}${unit}`);
-            }
-
-            const existing = dayCart.find(c => c.category === cat && c.item === itemName);
-            if (existing) {
-                existing.qty = +(existing.qty + qty).toFixed(2);
-            } else {
-                dayCart.push({ category: cat, item: itemName, qty, unit });
-            }
-
-            renderDayCart();
-            // إعادة تحديث قائمة منتجات القسم لتعكس الرصيد المتبقي بعد الإضافة للسلة
-            onCategoryChange();
-        }
-
-        function removeFromCart(idx) {
-            dayCart.splice(idx, 1);
-            renderDayCart();
-            if (document.getElementById('reqCategory').value) {
-                onCategoryChange();
-            }
-        }
-
-        function renderDayCart() {
-            const card = document.getElementById('dayCartCard');
-            const tbody = document.getElementById('dayCartBody');
-            const role = document.getElementById('officerRole').value;
-            document.getElementById('cartRoleBadge').textContent = role;
-
-            if (!dayCart.length) {
-                card.style.display = 'none';
-                return;
-            }
-            card.style.display = 'block';
-            tbody.innerHTML = dayCart.map((c, idx) => `
-                <tr>
-                    <td>${escH(c.category)}</td>
-                    <td style="font-weight:700;">${escH(c.item)}</td>
-                    <td style="color:#10b981; font-weight:700;">${escH(c.qty)}</td>
-                    <td>${escH(c.unit)}</td>
-                    <td><button type="button" onclick="removeFromCart(${idx})" style="background:#ef4444; color:#fff; border:none; border-radius:6px; padding:4px 10px; cursor:pointer;">❌</button></td>
-                </tr>
-            `).join('');
-        }
-
-        async function submitAllDayNeeds() {
-            const role = document.getElementById('officerRole').value;
-            const name = document.getElementById('officerName').value.trim();
-            const phone = document.getElementById('officerPhone').value.trim();
-
-            if (!name || !phone) {
-                return alert('⚠️ يرجى إدخال اسم المسؤول ورقم الموبايل في القسم الأول أولاً!');
-            }
-            if (!dayCart.length) return;
-
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = '⏳ جاري إرسال الطلبات للتجهيز...';
-
-            const today = new Date().toISOString().split('T')[0];
-            let successCount = 0;
-
-            try {
-                for (const itemObj of dayCart) {
-                    const payload = {
-                        action: 'add',
-                        category: itemObj.category,
-                        targetDay: role,
-                        requesterName: `[${role}]${name}`,
-                        contactNumber: phone,
-                        item: itemObj.item,
-                        qty: itemObj.qty,
-                        unit: itemObj.unit,
-                        date: today
-                    };
-                    const res = await fetch(purchaseURL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload),
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-                    });
-                    const result = await res.json();
-                    if (result && !result.error) successCount++;
-                }
-
-                if (successCount === dayCart.length) {
-                    alert(`✅ تم إرسال (${successCount}) صنف بنجاح لـ (${role})! ستظهر في إدارة الطلبات ثم عند مسؤول اليوم التحضيري.`);
-                    dayCart = [];
-                    renderDayCart();
-                    await initStock();
-                    onCategoryChange();
-                    loadMyRequests();
-                } else {
-                    alert(`⚠️ تم إرسال ${successCount} من أصل ${dayCart.length} صنف. يرجى مراجعة الإدارة.`);
-                }
-            } catch (err) {
-                alert('⚠️ حدث خطأ في الاتصال بالسيرفر أثناء الإرسال.');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = '🚀 إرسال الطلب بالكامل للتجهيز';
-            }
-        }
-
-        async function loadMyRequests() {
-            const role = document.getElementById('officerRole').value;
-            document.getElementById('trackRoleTitle').textContent = role;
-            if (dayCart.length) document.getElementById('cartRoleBadge').textContent = role;
-
-            const pass = document.getElementById('viewPass').value || sessionStorage.getItem('adminPass') || '';
-            const tbody = document.getElementById('myRequestsBody');
-            if (!pass) {
-                tbody.innerHTML = '<tr><td colspan="6">أدخل كلمة المرور واضغط "عرض الطلبات" لمتابعة التجهيز.</td></tr>';
-                return;
-            }
-            try { sessionStorage.setItem('adminPass', pass); } catch (e) {}
-
-            tbody.innerHTML = '<tr><td colspan="6">⏳ جاري التحميل...</td></tr>';
-
-            try {
-                const res = await fetch(purchaseURL + '?pass=' + encodeURIComponent(pass));
-                const data = await res.json();
-                if (data.error) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="color:#ef4444;">❌ ${escH(data.error)}</td></tr>`; return; } document.getElementById('passBox').style.display = 'none'; const filtered = (Array.isArray(data) ? data : []).filter(r => { const raw = String(r.requesterName \vert{}\vert{} ''); return r.targetDay === role \vert{}\vert{} raw.startsWith(`[${role}]`);
-                }).reverse();
-
-                if (!filtered.length) {
-                    tbody.innerHTML = `<tr><td colspan="6">لا توجد طلبات مسجلة حالياً لـ (${escH(role)}).</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = filtered.map(r => {
-                    const cleanName = String(r.requesterName || '').replace(/^\[.*?\]\s*/, '');
-                    let st = '<span class="status-wait">بانتظار اعتماد الإدارة ⏳</span>';
-                    if (r.status === 'REJECTED') {
-                        st = '<span class="status-rej">تم إلغاء الطلب ❌</span>';
-                    } else if (r.status === 'FULFILLED' || r.status === 'PO_CONFIRMED') {
-                        st = '<span class="status-ready">جاهز عند مسؤول اليوم التحضيري ✅</span>';
-                    } else if ((parseFloat(r.purchase_qty_needed) || 0) > 0 && r.status !== 'PENDING_APPROVAL') {
-                        st = '<span class="status-wait">معتمد وجاري شراؤه 🛒</span>';
-                    }
-                    return `<tr>
-                        <td style="font-weight:700;">${escH(r.item)}</td>
-                        <td>${escH(r.category)}</td>
-                        <td>
+        .table-container { overflow-x: auto; border-radius: 11px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; background: var(--bg); font-size: 0.92em; }
+        th, td { padding: 11px; text-align: center; border-bottom: 1px solid var(--border);
