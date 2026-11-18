@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة الطلبات والتوريد</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="مخزن القافلة">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1200px; margin: auto; }
@@ -283,22 +290,43 @@
             } catch (e) {}
         }
 
+        async function sendSystemNotification(title, body) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            try {
+                if ('serviceWorker' in navigator) {
+                    const reg = await navigator.serviceWorker.ready;
+                    if (reg && reg.showNotification) {
+                        await reg.showNotification(title, {
+                            body: body,
+                            icon: 'icon-192.png',
+                            badge: 'icon-192.png',
+                            dir: 'rtl',
+                            lang: 'ar',
+                            tag: 'kafela-new-order',
+                            renotify: true
+                        });
+                        return;
+                    }
+                }
+                new Notification(title, { body: body, icon: 'icon-192.png', dir: 'rtl', lang: 'ar' });
+            } catch (e) {}
+        }
+
         async function enableBrowserNotifications(showTest = false) {
             playAlertSound();
-            if ('Notification' in window) {
-                const perm = await Notification.requestPermission();
-                const st = document.getElementById('notifyStatusText');
-                if (perm === 'granted') {
-                    st.textContent = '✅ إشعارات الموبايل والصوت مفعّلة بنجاح';
-                    if (showTest) {
-                        new Notification('🔔 تم تفعيل إشعارات مخزن القافلة', {
-                            body: 'سيصلك تنبيه صوتي وإشعار فور وصول أي طلب جديد.',
-                            icon: 'icon-192.png'
-                        });
-                    }
-                } else {
-                    st.textContent = '🔔 التنبيه الصوتي والداخلي مفعل (إشعارات المتصفح محظورة من الإعدادات)';
+            const st = document.getElementById('notifyStatusText');
+            if (!('Notification' in window)) {
+                st.textContent = '🔔 التنبيه الصوتي والداخلي مفعل (لإشعارات iOS أضف التطبيق للشاشة الرئيسية أولاً)';
+                return;
+            }
+            const perm = await Notification.requestPermission();
+            if (perm === 'granted') {
+                st.textContent = '✅ إشعارات الموبايل والصوت مفعّلة بنجاح';
+                if (showTest) {
+                    await sendSystemNotification('🔔 تم تفعيل إشعارات مخزن القافلة', 'سيصلك تنبيه صوتي وإشعار فور وصول أي طلب جديد.');
                 }
+            } else {
+                st.textContent = '🔔 التنبيه الصوتي والداخلي مفعل (تأكد من السماح بالإشعارات في إعدادات التطبيق)';
             }
         }
 
@@ -317,14 +345,7 @@
                 const itemDesc = newest ? `${newest.item} (${newest.requested_qty || newest.purchase_qty_needed || ''} ${newest.unit || ''}) - ${extractDayInfo(newest).cleanName}` : 'يوجد طلب مشتريات جديد';
                 playAlertSound();
                 showInAppToast('🛒 وصل طلب جديد للمخزن!', itemDesc);
-                if ('Notification' in window && Notification.permission === 'granted') {
-                    new Notification('🛒 طلب جديد - مخزن القافلة', {
-                        body: itemDesc,
-                        icon: 'icon-192.png',
-                        dir: 'rtl',
-                        lang: 'ar'
-                    });
-                }
+                sendSystemNotification('🛒 طلب جديد - مخزن القافلة', itemDesc);
             }
             lastKnownCount = latestList.length;
             lastKnownMaxRow = maxRow;
@@ -343,6 +364,11 @@
         }, 30000);
 
         refreshAll();
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
     </script>
 </body>
 </html>
