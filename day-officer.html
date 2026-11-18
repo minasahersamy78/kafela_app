@@ -58,4 +58,552 @@
 
         .table-container { overflow-x: auto; border-radius: 11px; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; background: var(--bg); font-size: 0.92em; }
-        th, td { padding: 11px; text-align: center; border-bottom: 1px solid var(--border);
+        th, td { padding: 11px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        th { background: var(--card); color: #c084fc; }
+        .sync-badge { font-size: 0.82em; color: var(--muted); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="index.html" class="nav-btn nav-home">🏠 الرئيسية</a>
+        <a href="servant.html" class="nav-btn">🛒 بوابة الخدام</a>
+        <a href="inventory.html" class="nav-btn">📦 المخزون</a>
+        <a href="add-product.html" class="nav-btn">➕ إضافة صنف</a>
+        <a href="admin-requests.html" class="nav-btn">📋 إدارة الطلبات</a>
+        <a href="history.html" class="nav-btn">🗂️ الأرشيف</a>
+        <a href="reports.html" class="nav-btn">📊 التقارير</a>
+        <a href="preparatory.html" class="nav-btn">✅ اليوم التحضيري</a>
+        <a href="day-officer.html" class="nav-btn active">📅 مسؤولين الأيام</a>
+    </div>
+
+    <div class="header">
+        <h1>📅 بوابة مسؤولين الأيام والأقسام</h1>
+        <p>اختيار سريع ومباشر للأصناف المتاحة حسب رصيد المخزن الفعلي</p>
+    </div>
+
+    <!-- 1. بيانات المسؤول -->
+    <div class="card">
+        <div class="card-head">
+            <h3>👤 1. بيانات المسؤول واليوم / القسم</h3>
+        </div>
+        <div class="grid">
+            <div>
+                <label>اختر يومك أو قسمك المسؤول عنه:</label>
+                <select id="officerRole" onchange="onRoleChange()">
+                    <option value="اليوم الأول">اليوم الأول</option>
+                    <option value="اليوم الثاني">اليوم الثاني</option>
+                    <option value="اليوم الثالث">اليوم الثالث</option>
+                    <option value="مسؤول اليوم التحضيري">مسؤول اليوم التحضيري</option>
+                    <option value="المعرض">المعرض</option>
+                    <option value="مسابقات الأهالي">مسابقات الأهالي</option>
+                    <option value="الأكل">الأكل</option>
+                    <option value="حاجة تانية">حاجة تانية</option>
+                </select>
+                <div id="customRoleWrap" style="display:none; margin-top:10px;">
+                    <input type="text" id="customOfficerRole" placeholder="اكتب اسم اليوم أو القسم..." oninput="onRoleChange()">
+                </div>
+            </div>
+            <div>
+                <label>اسم المسؤول:</label>
+                <input type="text" id="officerName" placeholder="اكتب اسمك الثلاثي..." oninput="saveOfficerProfile()">
+            </div>
+            <div>
+                <label>رقم الموبايل للتواصل:</label>
+                <input type="tel" id="officerPhone" placeholder="01xxxxxxxxx" oninput="saveOfficerProfile()">
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. الاختيار الذكي للقسم والمنتج والكمية -->
+    <div class="card">
+        <div class="card-head">
+            <h3>📦 2. اختيار الأصناف المتاحة من المخزن</h3>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="sync-badge" id="stockSyncStatus">⏳ جاري التحميل...</span>
+                <button type="button" class="btn-mini" id="reloadStockBtn" onclick="loadStockData(true)">🔄 تحديث المخزن</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <label>أولاً: اختر القسم:</label>
+                <select id="reqCategory" onchange="onCategoryChange()">
+                    <option value="" disabled selected>⏳ جاري تحميل أقسام المخزن...</option>
+                </select>
+            </div>
+
+            <div>
+                <label>ثانياً: اختر المنتج (من هذا القسم فقط):</label>
+                <select id="reqItemSelect" onchange="onProductSelect()" disabled>
+                    <option value="" disabled selected>-- اختر القسم أولاً --</option>
+                </select>
+            </div>
+
+            <div>
+                <label>ثالثاً: الكمية المطلوبة (بحد أقصى المتاح):</label>
+                <input type="number" id="reqQty" min="0.1" step="0.1" placeholder="اختر المنتج أولاً..." oninput="enforceStockLimit()" disabled>
+            </div>
+
+            <div>
+                <label>الوحدة:</label>
+                <input type="text" id="reqUnit" placeholder="تُحدد تلقائياً..." readonly disabled>
+            </div>
+        </div>
+
+        <div class="smart-hint" id="stockStatusBox">
+            💡 ابدأ باختيار <strong>القسم</strong> لتظهر لك منتجاته المتاحة في المخزن فقط.
+        </div>
+
+        <button type="button" class="btn-add" id="addCartBtn" onclick="addNeedToCart()" disabled>➕ إضافة الصنف لقائمة طلبات اليوم</button>
+    </div>
+
+    <!-- 3. سلة طلبات اليوم -->
+    <div class="card" id="dayCartCard" style="display:none; border: 2px solid var(--green);">
+        <div class="card-head">
+            <h3 style="color:#34d399;">🛒 قائمة الأصناف الجاهزة للإرسال (<span id="cartRoleBadge"></span>)</h3>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>القسم</th>
+                        <th>الصنف</th>
+                        <th>الكمية المطلوبة</th>
+                        <th>الوحدة</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="dayCartBody"></tbody>
+            </table>
+        </div>
+        <button type="button" class="btn-submit" id="submitBtn" onclick="submitAllDayNeeds()">🚀 إرسال الطلب بالكامل للتجهيز</button>
+    </div>
+
+    <script>
+        const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
+        const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
+        const IGNORED_SHEETS = new Set(['Sheet5', 'Sheet6', 'أرشيف_الطلبات', 'المشتريات']);
+        const CACHE_KEY = 'kafela_day_officer_stock_v1';
+        const PROFILE_KEY = 'kafela_day_officer_profile_v1';
+
+        let stockList = [];
+        let dayCart = [];
+        let selectedStockItem = null;
+
+        const escH = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const localToday = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+        function getActiveRole() {
+            const sel = document.getElementById('officerRole').value;
+            if (sel === 'حاجة تانية') {
+                return document.getElementById('customOfficerRole').value.trim() || 'حاجة تانية';
+            }
+            return sel;
+        }
+
+        function onRoleChange() {
+            const isOther = document.getElementById('officerRole').value === 'حاجة تانية';
+            document.getElementById('customRoleWrap').style.display = isOther ? 'block' : 'none';
+            if (dayCart.length) {
+                document.getElementById('cartRoleBadge').textContent = getActiveRole();
+            }
+            saveOfficerProfile();
+        }
+
+        function saveOfficerProfile() {
+            try {
+                localStorage.setItem(PROFILE_KEY, JSON.stringify({
+                    role: document.getElementById('officerRole').value,
+                    customRole: document.getElementById('customOfficerRole').value,
+                    name: document.getElementById('officerName').value,
+                    phone: document.getElementById('officerPhone').value
+                }));
+            } catch (e) {}
+        }
+
+        function loadOfficerProfile() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+                const roleSel = document.getElementById('officerRole');
+                if (saved.role && [...roleSel.options].some(o => o.value === saved.role)) {
+                    roleSel.value = saved.role;
+                }
+                if (saved.customRole) document.getElementById('customOfficerRole').value = saved.customRole;
+                if (saved.name) document.getElementById('officerName').value = saved.name;
+                if (saved.phone) document.getElementById('officerPhone').value = saved.phone;
+                onRoleChange();
+            } catch (e) {}
+        }
+
+        function getEffectiveRemaining(sheet, itemName) {
+            const found = stockList.find(i => i.sheet === sheet && i.item === itemName);
+            if (!found) return 0;
+            const rawAvail = parseFloat(found.remaining) || 0;
+            const inCart = dayCart
+                .filter(c => c.category === sheet && c.item === itemName)
+                .reduce((sum, c) => sum + (parseFloat(c.qty) || 0), 0);
+            return Math.max(0, +(rawAvail - inCart).toFixed(2));
+        }
+
+        function normalizeStockRows(raw) {
+            const arr = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.data) ? raw.data : []);
+            return arr
+                .filter(i => i && i.sheet && i.item && !IGNORED_SHEETS.has(String(i.sheet).trim()))
+                .map(i => ({
+                    sheet: String(i.sheet).trim(),
+                    item: String(i.item).trim(),
+                    unit: String(i.unit || 'قطعه').trim(),
+                    remaining: parseFloat(i.remaining) || 0
+                }));
+        }
+
+        function populateCategoriesUI() {
+            const catSel = document.getElementById('reqCategory');
+            const prevCat = catSel.value;
+            const prevItem = document.getElementById('reqItemSelect').value;
+
+            const cats = [...new Set(stockList.map(i => i.sheet))];
+            if (!cats.length) {
+                catSel.innerHTML = '<option value="" disabled selected>⚠️ لا توجد أقسام متاحة</option>';
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            const defOpt = document.createElement('option');
+            defOpt.value = '';
+            defOpt.disabled = true;
+            defOpt.selected = true;
+            defOpt.textContent = '-- اختر القسم --';
+            frag.appendChild(defOpt);
+
+            cats.forEach(c => {
+                const itemsInCat = stockList.filter(i => i.sheet === c);
+                const availCount = itemsInCat.filter(i => getEffectiveRemaining(c, i.item) > 0).length;
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = `${c} (${availCount} متاح من ${itemsInCat.length})`;
+                frag.appendChild(opt);
+            });
+
+            catSel.innerHTML = '';
+            catSel.appendChild(frag);
+
+            if (prevCat && cats.includes(prevCat)) {
+                catSel.value = prevCat;
+                onCategoryChange(prevItem);
+            }
+        }
+
+        async function fetchWithTimeout(url, timeoutMs = 12000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return await res.json();
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        async function loadStockData(forceAlert = false) {
+            const statusEl = document.getElementById('stockSyncStatus');
+            const reloadBtn = document.getElementById('reloadStockBtn');
+            reloadBtn.disabled = true;
+
+            // 1. تحميل فوري من الكاش المحلي إن وجد
+            if (!stockList.length) {
+                try {
+                    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+                    if (Array.isArray(cached) && cached.length) {
+                        stockList = cached;
+                        populateCategoriesUI();
+                        statusEl.textContent = '⚡ جاري تحديث الأرصدة...';
+                    }
+                } catch (e) {}
+            } else {
+                statusEl.textContent = '⏳ جاري تحديث الأرصدة...';
+            }
+
+            // 2. جلب البيانات الحديثة من السيرفر مع إعادة محاولة تلقائية مرة واحدة
+            let raw = null;
+            for (let attempt = 1; attempt <= 2; attempt++) {
+                try {
+                    raw = await fetchWithTimeout(inventoryURL, 12000);
+                    break;
+                } catch (err) {
+                    if (attempt === 2) {
+                        reloadBtn.disabled = false;
+                        if (stockList.length) {
+                            statusEl.textContent = '⚠️ يعرض آخر نسخة محفوظة';
+                        } else {
+                            statusEl.textContent = '❌ تعذر الاتصال';
+                            document.getElementById('reqCategory').innerHTML = '<option value="" disabled selected>⚠️ تعذر تحميل الأقسام — اضغط تحديث المخزن</option>';
+                            document.getElementById('stockStatusBox').className = 'smart-hint err';
+                            document.getElementById('stockStatusBox').innerHTML = '⚠️ الشبكة بطيئة أو تعذر الوصول لملف المخزن. اضغط على زر <strong>«🔄 تحديث المخزن»</strong> بالأعلى.';
+                        }
+                        if (forceAlert) alert('⚠️ تعذر تحديث بيانات المخزن، تأكد من اتصال الإنترنت وحاول مرة أخرى.');
+                        return;
+                    }
+                }
+            }
+
+            const cleaned = normalizeStockRows(raw);
+            if (cleaned.length) {
+                stockList = cleaned;
+                try { localStorage.setItem(CACHE_KEY, JSON.stringify(cleaned)); } catch (e) {}
+                populateCategoriesUI();
+                statusEl.textContent = `✅ محدث (${cleaned.length} صنف)`;
+            } else if (!stockList.length) {
+                statusEl.textContent = '⚠️ المخزن فارغ';
+                document.getElementById('reqCategory').innerHTML = '<option value="" disabled selected>لا توجد أصناف مسجلة</option>';
+            }
+
+            reloadBtn.disabled = false;
+        }
+
+        function onCategoryChange(preserveItemName = '') {
+            const cat = document.getElementById('reqCategory').value;
+            const itemSel = document.getElementById('reqItemSelect');
+            const qtyInput = document.getElementById('reqQty');
+            const unitInput = document.getElementById('reqUnit');
+            const hintBox = document.getElementById('stockStatusBox');
+
+            selectedStockItem = null;
+            qtyInput.value = '';
+            qtyInput.disabled = true;
+            unitInput.value = '';
+            document.getElementById('addCartBtn').disabled = true;
+
+            const filteredItems = stockList
+                .filter(i => i.sheet === cat)
+                .sort((a, b) => getEffectiveRemaining(b.sheet, b.item) - getEffectiveRemaining(a.sheet, a.item));
+
+            if (!filteredItems.length) {
+                itemSel.innerHTML = '<option value="" disabled selected>لا توجد أصناف في هذا القسم</option>';
+                itemSel.disabled = true;
+                hintBox.className = 'smart-hint warn';
+                hintBox.innerHTML = '⚠️ لا توجد أصناف مسجلة في هذا القسم حالياً.';
+                return;
+            }
+
+            const frag = document.createDocumentFragment();
+            const defOpt = document.createElement('option');
+            defOpt.value = '';
+            defOpt.disabled = true;
+            defOpt.selected = true;
+            defOpt.textContent = `-- اختر المنتج من قسم ${cat} --`;
+            frag.appendChild(defOpt);
+
+            let availableItemsCount = 0;
+            filteredItems.forEach(it => {
+                const effAvail = getEffectiveRemaining(it.sheet, it.item);
+                const opt = document.createElement('option');
+                opt.value = it.item;
+                if (effAvail > 0) {
+                    availableItemsCount++;
+                    opt.textContent = `${it.item} — (المتاح: ${effAvail} ${it.unit})`;
+                } else {
+                    opt.textContent = `${it.item} — (نفد من المخزن: 0 ${it.unit})`;
+                    opt.disabled = true;
+                }
+                frag.appendChild(opt);
+            });
+
+            itemSel.innerHTML = '';
+            itemSel.appendChild(frag);
+            itemSel.disabled = false;
+
+            if (preserveItemName && filteredItems.some(i => i.item === preserveItemName && getEffectiveRemaining(i.sheet, i.item) > 0)) {
+                itemSel.value = preserveItemName;
+                onProductSelect();
+                return;
+            }
+
+            hintBox.className = availableItemsCount > 0 ? 'smart-hint ok' : 'smart-hint err';
+            hintBox.innerHTML = availableItemsCount > 0
+                ? `📂 يوجد <strong>${availableItemsCount}</strong> صنف متاح في قسم <strong>${escH(cat)}</strong>. اختر المنتج الآن.`
+                : `❌ جميع أصناف قسم <strong>${escH(cat)}</strong> رصيدها صفر في المخزن حالياً.`;
+        }
+
+        function onProductSelect() {
+            const cat = document.getElementById('reqCategory').value;
+            const itemName = document.getElementById('reqItemSelect').value;
+            const qtyInput = document.getElementById('reqQty');
+            const unitInput = document.getElementById('reqUnit');
+            const hintBox = document.getElementById('stockStatusBox');
+            const addBtn = document.getElementById('addCartBtn');
+
+            selectedStockItem = stockList.find(i => i.sheet === cat && i.item === itemName) || null;
+            if (!selectedStockItem) return;
+
+            const effAvail = getEffectiveRemaining(cat, itemName);
+            unitInput.value = selectedStockItem.unit || 'قطعه';
+
+            if (effAvail <= 0) {
+                qtyInput.value = 0;
+                qtyInput.disabled = true;
+                addBtn.disabled = true;
+                hintBox.className = 'smart-hint err';
+                hintBox.innerHTML = `❌ الصنف <strong>${escH(itemName)}</strong> غير متاح (الكمية المتبقية: 0).`;
+                return;
+            }
+
+            qtyInput.disabled = false;
+            qtyInput.min = effAvail < 1 ? 0.1 : 1;
+            qtyInput.max = effAvail;
+            qtyInput.value = effAvail >= 1 ? 1 : effAvail;
+            addBtn.disabled = false;
+
+            hintBox.className = 'smart-hint ok';
+            hintBox.innerHTML = `✅ المتاح بالمخزن من <strong>${escH(itemName)}</strong>: <strong>${effAvail} ${escH(selectedStockItem.unit)}</strong> (الحد الأقصى للطلب).`;
+        }
+
+        function enforceStockLimit() {
+            if (!selectedStockItem) return;
+            const qtyInput = document.getElementById('reqQty');
+            const hintBox = document.getElementById('stockStatusBox');
+            const addBtn = document.getElementById('addCartBtn');
+            const effAvail = getEffectiveRemaining(selectedStockItem.sheet, selectedStockItem.item);
+            let val = parseFloat(qtyInput.value);
+
+            if (isNaN(val) || val <= 0) {
+                addBtn.disabled = true;
+                hintBox.className = 'smart-hint warn';
+                hintBox.innerHTML = `⚠️ أدخل كمية صحيحة (من 1 إلى ${effAvail} ${escH(selectedStockItem.unit)}).`;
+                return;
+            }
+
+            if (val > effAvail) {
+                qtyInput.value = effAvail;
+                val = effAvail;
+                hintBox.className = 'smart-hint warn';
+                hintBox.innerHTML = `⚠️ تم ضبط الكمية تلقائياً للحد الأقصى المتاح في المخزن وهو <strong>${effAvail} ${escH(selectedStockItem.unit)}</strong>.`;
+            } else {
+                hintBox.className = 'smart-hint ok';
+                hintBox.innerHTML = `✅ الكمية المطلوبة: <strong>${val} ${escH(selectedStockItem.unit)}</strong> (متبقي بعد الطلب: <strong>${+(effAvail - val).toFixed(2)}</strong>).`;
+            }
+            addBtn.disabled = false;
+        }
+
+        function addNeedToCart() {
+            if (!selectedStockItem) return;
+            const cat = selectedStockItem.sheet;
+            const itemName = selectedStockItem.item;
+            const unit = selectedStockItem.unit || 'قطعه';
+            const effAvail = getEffectiveRemaining(cat, itemName);
+            const qty = parseFloat(document.getElementById('reqQty').value);
+
+            if (!qty || qty <= 0 || qty > effAvail) {
+                return alert(`⚠️ الكمية غير صالحة! المتاح بالمخزن: ${effAvail} ${unit}`);
+            }
+
+            const existing = dayCart.find(c => c.category === cat && c.item === itemName);
+            if (existing) {
+                existing.qty = +(existing.qty + qty).toFixed(2);
+            } else {
+                dayCart.push({ category: cat, item: itemName, qty, unit });
+            }
+
+            renderDayCart();
+            populateCategoriesUI();
+            onCategoryChange();
+        }
+
+        function removeFromCart(idx) {
+            dayCart.splice(idx, 1);
+            renderDayCart();
+            populateCategoriesUI();
+            if (document.getElementById('reqCategory').value) {
+                onCategoryChange();
+            }
+        }
+
+        function renderDayCart() {
+            const card = document.getElementById('dayCartCard');
+            const tbody = document.getElementById('dayCartBody');
+            document.getElementById('cartRoleBadge').textContent = getActiveRole();
+
+            if (!dayCart.length) {
+                card.style.display = 'none';
+                return;
+            }
+            card.style.display = 'block';
+            tbody.innerHTML = dayCart.map((c, idx) => `
+                <tr>
+                    <td>${escH(c.category)}</td>
+                    <td style="font-weight:700;">${escH(c.item)}</td>
+                    <td style="color:#10b981; font-weight:700;">${escH(c.qty)}</td>
+                    <td>${escH(c.unit)}</td>
+                    <td><button type="button" onclick="removeFromCart(${idx})" style="background:#ef4444; color:#fff; border:none; border-radius:6px; padding:4px 10px; cursor:pointer;">❌</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function submitAllDayNeeds() {
+            const role = getActiveRole();
+            const name = document.getElementById('officerName').value.trim();
+            const phone = document.getElementById('officerPhone').value.trim();
+
+            if (!name || !phone) {
+                alert('⚠️ يرجى إدخال اسم المسؤول ورقم الموبايل في القسم الأول أولاً!');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            if (!dayCart.length) return;
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+
+            const today = localToday();
+            let successCount = 0;
+
+            try {
+                for (let i = 0; i < dayCart.length; i++) {
+                    const itemObj = dayCart[i];
+                    btn.innerText = `⏳ جاري إرسال الصنف ${i + 1} من ${dayCart.length}...`;
+
+                    const payload = {
+                        action: 'add',
+                        category: itemObj.category,
+                        targetDay: role,
+                        requesterName: `[${role}] ${name}`,
+                        contactNumber: phone,
+                        item: itemObj.item,
+                        qty: itemObj.qty,
+                        unit: itemObj.unit,
+                        date: today
+                    };
+
+                    const res = await fetch(purchaseURL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                    });
+                    const result = await res.json();
+                    if (result && !result.error) successCount++;
+                }
+
+                if (successCount === dayCart.length) {
+                    alert(`✅ تم إرسال (${successCount}) صنف بنجاح لـ (${role})!`);
+                    dayCart = [];
+                    renderDayCart();
+                    await loadStockData(false);
+                    if (document.getElementById('reqCategory').value) onCategoryChange();
+                } else {
+                    alert(`⚠️ تم إرسال ${successCount} من أصل ${dayCart.length} صنف. يرجى مراجعة الإدارة.`);
+                }
+            } catch (err) {
+                alert('⚠️ حدث خطأ في الاتصال بالسيرفر أثناء الإرسال.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '🚀 إرسال الطلب بالكامل للتجهيز';
+            }
+        }
+
+        loadOfficerProfile();
+        loadStockData(false);
+    </script>
+</body>
+</html>
