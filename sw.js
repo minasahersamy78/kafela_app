@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kafela-pwa-v2';
+const CACHE_NAME = 'kafela-pwa-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,10 @@ const ASSETS = [
   './reports.html',
   './preparatory.html',
   './day-officer.html',
-  './manifest.json'
+  './manifest.json',
+  './icon-192.png?v=3',
+  './icon-512.png?v=3',
+  './logo.jpg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -33,12 +36,10 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // طلبات Google Apps Script (البيانات الحية) تُجلب من الشبكة مباشرة
   if (url.hostname.includes('script.google.com') || url.hostname.includes('googleusercontent.com')) {
     return;
   }
 
-  // استراتيجية Network-First للصفحات مع الرجوع للكاش عند انقطاع الشبدة
   event.respondWith(
     fetch(event.request)
       .then((res) => {
