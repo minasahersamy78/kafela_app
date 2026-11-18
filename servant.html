@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الخدام - تقديم طلب</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="مخزن القافلة">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; padding: 20px; max-width: 1000px; margin: auto; }
@@ -113,23 +120,7 @@
     <script>
         const inventoryURL = 'https://script.google.com/macros/s/AKfycbzMZ-4vIawAyFXmcBHsxUauSXIBLD7w27UoFUFuoR0U21nolJgbEAwLNWyAPwPcdAeG0w/exec';
                 const purchaseURL = 'https://script.google.com/macros/s/AKfycbwZOLwntroP8_uXGI2j2z3sGKagwxr3F14MJiIaUF5f6Hly6D0BkosGuo8pJzuv1uZraw/exec';
-        // قناة الإشعارات الفورية على تطبيق ntfy (غيّر الاسم لأي اسم سري خاص بأسرتكم واشترك فيه على الموبايل)
-        const NTFY_TOPIC = 'kafela_anba_abram_orders_2026';
 
-        function sendMobileOrderNotification(requesterName, targetDay, itemsList) {
-            if (!NTFY_TOPIC || !itemsList.length) return;
-            const summaryLines = itemsList.map(p => `• ${p.item} (${p.qty} ${p.unit}) - [${p.category}]`).join('\n');
-            const bodyText = `👤 الخادم: ${requesterName}\n📅 الجهة/اليوم: ${targetDay}\n📦 الأصناف (${itemsList.length}):\n${summaryLines}`;
-            fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
-                method: 'POST',
-                headers: {
-                    'Title': '🛒 طلب مشتريات جديد - مخزن القافلة',
-                    'Priority': 'high',
-                    'Tags': 'shopping_cart,bell'
-                },
-                body: bodyText
-            }).catch(() => {});
-        }
         
         let invData = [], cart = [];
         const DEFAULT_CATS = ['العاب','اكل خدام','شنطه الانبا ابرام','ديكور','عمل فني','عمل خدمي', 'بلاستيكات', 'اكل'];
@@ -300,12 +291,8 @@
                     }
                 }
                 
-                if (sentItems.length > 0) {
-                    sendMobileOrderNotification(name, targetDay, sentItems);
-                }
-
                 if (successCount === cart.length) {
-                    alert('✅ تم إرسال كل الطلبات للإدارة بنجاح وإشعار المسؤولين! شكراً لخدمتك 💙');
+                    alert('✅ تم إرسال كل الطلبات للإدارة بنجاح! شكراً لخدمتك 💙');
                     cart = []; renderCart();
                 } else {
                     alert('⚠️ تم إرسال بعض المنتجات وحدث خطأ في الباقي. برجاء مراجعة الإدارة.');
@@ -318,6 +305,11 @@
         }
 
         init();
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
     </script>
 </body>
 </html>
